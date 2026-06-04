@@ -18,16 +18,16 @@
         background: var(--panel, #fff); border: 2px solid var(--panelBorder, #e6e9f0);
         box-shadow: 0 24px 60px -30px rgba(20,28,46,.28);
       }
-      .title-wrap { position: absolute; left: 0; right: 0; top: 52px; text-align: center; z-index: 6; }
+      .title-wrap { position: absolute; left: 0; right: 0; top: 48px; text-align: center; z-index: 6; }
       /* Title + label fonts are mirrored from design.js here because HyperFrames
          embeds fonts from STATIC CSS. Keep these in sync with design.js. */
       .title {
         font-family: 'Outfit', system-ui, sans-serif; font-weight: 800;
-        font-size: 70px; letter-spacing: -1.5px; color: var(--ink, #16202e); line-height: 1;
+        font-size: 66px; color: var(--ink, #16202e); line-height: 1;
       }
       .kicker {
         font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px;
-        letter-spacing: 3px; text-transform: uppercase; color: var(--accentKicker, #626c7e); margin-bottom: 14px;
+        letter-spacing: 3px; text-transform: uppercase; color: var(--accentKicker, #626c7e); margin-bottom: 12px;
       }
       .lines { position: absolute; inset: 0; z-index: 1; overflow: visible; }
       .blobs { position: absolute; inset: 0; z-index: 0; }
@@ -48,7 +48,7 @@
       .node-icon svg { display: block; width: 100%; height: 100%; overflow: visible; }
       .node-label {
         font-family: 'Inter', system-ui, sans-serif; font-weight: 700; color: var(--ink, #16202e);
-        line-height: 1.08; margin-top: 12px; max-width: 190px;
+        line-height: 1.08; margin-top: 12px; max-width: 190px; text-wrap: balance;
       }
       .hub .disc { width: 116px; height: 116px; box-shadow: 0 16px 30px -14px rgba(20,28,46,.45); }
       .hub .node-icon { width: 64px; height: 64px; color: #fff; }
@@ -71,6 +71,16 @@
       .fitem .disc { width: 88px; height: 88px; }
       .fitem .node-icon { width: 50px; height: 50px; }
       .fitem .node-label { font-size: 17px; max-width: 150px; }
+
+      #root.dense-galaxy .title { font-size: 60px; }
+      #root.dense-galaxy .kicker { font-size: 17px; margin-bottom: 10px; }
+      #root.dense-galaxy .node-glow { opacity: .28; }
+      #root.dense-galaxy .hub .disc { width: 108px; height: 108px; }
+      #root.dense-galaxy .hub .node-icon { width: 58px; height: 58px; }
+      #root.dense-galaxy .hub .node-label { font-size: 23px; margin-top: 10px; }
+      #root.dense-galaxy .sat .disc { width: 62px; height: 62px; border-width: 2.5px; }
+      #root.dense-galaxy .sat .node-icon { width: 34px; height: 34px; }
+      #root.dense-galaxy .sat .node-label { font-size: 13px; max-width: 104px; margin-top: 6px; line-height: 1.08; }
 
       .credit {
         position: absolute; left: 46px; bottom: 38px; z-index: 7;
@@ -199,12 +209,13 @@
         const tl = gsap.timeline({ paused: true });
         const LOOP = DESIGN.loop || 6;
         const EASE = DESIGN.ease || "sine.inOut";
+        tl.to({}, { duration: LOOP }, 0);
 
         function yoyo(target, vars, half, phase = 0) {
           if (!target || target.length === 0) return;
           const halves = Math.round(LOOP / half);
           const h = LOOP / (halves % 2 === 0 ? halves : halves + 1);
-          tl.to(target, { ...vars, duration: h, ease: EASE, yoyo: true, repeat: (LOOP / h) - 1 }, phase);
+          tl.to(target, { ...vars, duration: h, ease: EASE, yoyo: true, repeat: Math.round(LOOP / h) - 1 }, phase);
         }
         function cycle(target, vars, cyc, phase = 0) {
           if (!target || target.length === 0) return;
@@ -214,29 +225,37 @@
         }
         const q = (node, sel) => node.querySelectorAll(sel);
         const has = (node, sel) => node.querySelector(sel);
+        const icon = (node) => has(node, ".node-icon");
+        const fallbackMotion = (node) => {
+          const t = icon(node);
+          if (!t) return;
+          gsap.set(t, { transformOrigin: "50% 50%" });
+          yoyo(t, { scale: 1.08 }, 1.5);
+        };
 
         // Every motion spans the FULL loop [0,LOOP] (no start offset) so it
         // returns to its base state at the seam. Variety comes from different
         // periods per motion, not from staggered starts.
         const MOTION = {
-          glow(n)  { yoyo(has(n, ".node-glow"), { opacity: .92, scale: 1.22 }, 1.5); },
-          pulse(n) { yoyo(has(n, ".node-icon"), { scale: 1.12 }, 1.0); },
-          bob(n)   { yoyo(has(n, ".node-icon"), { y: -9 }, 1.5); },
-          squish(n){ const t = has(n, "[data-squish]") || has(n, ".node-icon"); gsap.set(t, { transformOrigin: "50% 50%" }); yoyo(t, { scaleX: .68 }, 1.0); },
-          sway(n)  { const t = q(n, "[data-sway]").length ? q(n, "[data-sway]") : has(n, ".node-icon"); gsap.set(t, { transformOrigin: "50% 50%", svgOrigin: "50 50" }); yoyo(t, { rotation: 10 }, 1.5); },
-          spin(n)  { const t = has(n, "[data-spin]") || has(n, ".node-icon"); gsap.set(t, { svgOrigin: "50 50", transformOrigin: "50% 50%" }); cycle(t, { rotation: 360 }, 3); },
+          glow(n)  { yoyo(has(n, ".node-glow"), { opacity: .78, scale: 1.18 }, 1.5); yoyo(icon(n), { scale: 1.035 }, 1.5); },
+          pulse(n) { yoyo(icon(n), { scale: 1.12 }, 1.0); },
+          bob(n)   { yoyo(icon(n), { y: -9 }, 1.5); },
+          squish(n){ const t = has(n, "[data-squish]") || icon(n); gsap.set(t, { transformOrigin: "50% 50%" }); yoyo(t, { scaleX: .72 }, 1.0); },
+          sway(n)  { const t = q(n, "[data-sway]").length ? q(n, "[data-sway]") : icon(n); gsap.set(t, { transformOrigin: "50% 50%", svgOrigin: "50 50" }); yoyo(t, { rotation: 10 }, 1.5); },
+          spin(n)  { const t = has(n, "[data-spin]") || icon(n); gsap.set(t, { svgOrigin: "50 50", transformOrigin: "50% 50%" }); cycle(t, { rotation: 360 }, 3); },
           // rotate the WHOLE icon so dots keep their connector lines attached
-          orbit(n) { const t = has(n, ".node-icon"); gsap.set(t, { transformOrigin: "50% 50%" }); cycle(t, { rotation: 360 }, 6); },
+          orbit(n) { const t = icon(n); gsap.set(t, { transformOrigin: "50% 50%" }); cycle(t, { rotation: 360 }, 6); },
           blink(n) {
             const lid = has(n, "[data-lid]"), scr = q(n, "[data-blink]");
             if (lid) { gsap.set(lid, { svgOrigin: "50 50", scaleY: 0 }); tl.to(lid, { scaleY: 1, duration: .12, ease: "power1.in", yoyo: true, repeat: 1 }, 1.6); tl.to(lid, { scaleY: 1, duration: .12, ease: "power1.in", yoyo: true, repeat: 1 }, 4.2); }
             else if (scr.length) { yoyo(scr, { opacity: .2 }, .75); }
+            else fallbackMotion(n);
           },
-          flow(n)  { cycle(q(n, "[data-flow]"), { strokeDashoffset: -56 }, 2); },
-          draw(n)  { const t = q(n, "[data-draw]"); t.forEach((p) => { const L = p.getTotalLength ? p.getTotalLength() : 40; gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }); }); yoyo(t, { strokeDashoffset: 0 }, 1.5); },
-          bars(n)  { const b = q(n, "[data-bar]"); b.forEach((r) => gsap.set(r, { transformOrigin: "50% 100%" })); yoyo(b, { scaleY: .42 }, 1.5); },
-          shuffle(n) { const c = q(n, "[data-card]"); c.forEach((r, i) => yoyo(r, { y: i === 0 ? 7 : -7 }, 1.5)); },
-          morph(n) { const a = has(n, '[data-morph="a"]'), b = has(n, '[data-morph="b"]'); if (a && b) { yoyo(a, { opacity: 0 }, 1.5); yoyo(b, { opacity: 1 }, 1.5); } },
+          flow(n)  { const t = q(n, "[data-flow]"); t.length ? cycle(t, { strokeDashoffset: -56 }, 2) : yoyo(icon(n), { x: 5 }, 1.5); },
+          draw(n)  { const t = q(n, "[data-draw]"); if (!t.length) { fallbackMotion(n); return; } t.forEach((p) => { const L = p.getTotalLength ? p.getTotalLength() : 40; gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }); }); yoyo(t, { strokeDashoffset: 0 }, 1.5); },
+          bars(n)  { const b = q(n, "[data-bar]"); if (!b.length) { fallbackMotion(n); return; } b.forEach((r) => gsap.set(r, { transformOrigin: "50% 100%" })); yoyo(b, { scaleY: .42 }, 1.5); },
+          shuffle(n) { const c = q(n, "[data-card]"); c.length ? c.forEach((r, i) => yoyo(r, { y: i === 0 ? 7 : -7 }, 1.5)) : yoyo(icon(n), { y: 7 }, 1.5); },
+          morph(n) { const a = has(n, '[data-morph="a"]'), b = has(n, '[data-morph="b"]'); if (a && b) { yoyo(a, { opacity: 0 }, 1.5); yoyo(b, { opacity: 1 }, 1.5); } else fallbackMotion(n); },
         };
 
         function catmullRomClosed(pts) {
@@ -264,14 +283,20 @@
             const nx = (n) => BOX.x + n * BOX.w, ny = (n) => BOX.y + n * BOX.h;
             const D2R = Math.PI / 180;
             const hubXY = {};
+            const satCount = (F.zones || []).reduce((sum, z) => sum + ((z.sats || []).length), 0);
+            const dense = satCount > 12;
+            document.getElementById("root").classList.toggle("dense-galaxy", dense);
+            const ringOpacity = dense ? ".34" : ".55";
+            const spokeOpacity = dense ? ".13" : ".26";
+            const orbitOpacity = dense ? ".22" : ".38";
             (F.zones || []).forEach((z) => {
               const P = pal(z.color), cx = nx(z.x), cy = ny(z.y), R = z.r * RS;
               hubXY[z.id] = [cx, cy];
               const blob = document.createElement("div");
               blob.className = "blob";
-              Object.assign(blob.style, { left: cx + "px", top: cy + "px", width: R * 2 + "px", height: R * 2 + "px", background: P.tint, opacity: ".06" });
+              Object.assign(blob.style, { left: cx + "px", top: cy + "px", width: R * 2 + "px", height: R * 2 + "px", background: P.tint, opacity: dense ? ".04" : ".06" });
               $blobs.appendChild(blob);
-              $lines.appendChild(svgEl("circle", { cx, cy, r: R, fill: "none", stroke: P.ring, "stroke-width": 2, "stroke-dasharray": "2 13", "stroke-linecap": "round", opacity: ".55", class: "zone-ring" }));
+              $lines.appendChild(svgEl("circle", { cx, cy, r: R, fill: "none", stroke: P.ring, "stroke-width": dense ? 1.5 : 2, "stroke-dasharray": "2 13", "stroke-linecap": "round", opacity: ringOpacity, class: "zone-ring" }));
               // Distribute satellites so they fan AWAY from the canvas centre
               // (keeps clusters from colliding). A near-centre hub spreads its
               // satellites evenly around a full circle. Per-sat a/d still override.
@@ -288,14 +313,14 @@
                 else { a = base + k * step * D2R; dist = R * (s.d || (full ? 1.12 : 1.24)); }
                 const px = cx + dist * Math.cos(a), py = cy + dist * Math.sin(a);
                 s._xy = [px, py];
-                $lines.appendChild(svgEl("line", { x1: cx, y1: cy, x2: px, y2: py, stroke: P.ring, "stroke-width": 1.5, opacity: ".26" }));
+                $lines.appendChild(svgEl("line", { x1: cx, y1: cy, x2: px, y2: py, stroke: P.ring, "stroke-width": dense ? 1 : 1.5, opacity: spokeOpacity }));
               });
               $nodes.appendChild(makeNode({ kind: "hub", x: cx, y: cy, label: z.label, icon: z.hub.icon, motion: z.hub.motion, palette: P, discBg: P.hub, iconColor: "#fff" }));
               sats.forEach((s) => $nodes.appendChild(makeNode({ kind: "sat", x: s._xy[0], y: s._xy[1], label: s.label, icon: s.icon, motion: s.motion, palette: P, iconColor: P.tint, ring: P.ring })));
             });
             const pts = (F.orbit || []).map((id) => hubXY[id]).filter(Boolean);
             if (pts.length >= 3) {
-              const path = svgEl("path", { d: catmullRomClosed(pts), fill: "none", stroke: DESIGN.ink, "stroke-width": 2, "stroke-dasharray": "2 15", "stroke-linecap": "round", opacity: ".38", id: "harness-orbit" });
+              const path = svgEl("path", { d: catmullRomClosed(pts), fill: "none", stroke: DESIGN.ink, "stroke-width": dense ? 1.5 : 2, "stroke-dasharray": "2 15", "stroke-linecap": "round", opacity: orbitOpacity, id: "harness-orbit" });
               $lines.insertBefore(path, $lines.firstChild);
               gsap.set(path, { svgOrigin: "540 560", transformOrigin: "50% 50%" });
               tl.to(path, { rotation: 1.2, duration: 3, ease: EASE, yoyo: true, repeat: 1 }, 0);

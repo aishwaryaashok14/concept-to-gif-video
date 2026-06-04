@@ -77,11 +77,14 @@ concept-gif/            the reusable skill
 examples/
   harnessed-llm-agent/  galaxy — "A Harnessed LLM Agent"
   frontend-backend/     flow   — "Web App Architecture"
+  rag-answer-loop/      flow   — "RAG Answer Loop"
 ```
 
 ## Notes
 
 - Output is a **square, seamless, looping** GIF (rendered MP4 → GIF via ffmpeg).
+- Files under `examples/*/renders/` are generated outputs; re-render them after
+  changing an example's `frame.js` or engine files.
 - Self-contained: GSAP is vendored locally; rendering is deterministic and needs
   no network.
 - Fonts (Outfit / Inter by default) are embedded by HyperFrames from static CSS —

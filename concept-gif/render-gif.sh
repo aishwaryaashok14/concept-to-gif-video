@@ -5,15 +5,15 @@ set -euo pipefail
 
 IN="${1:?usage: render-gif.sh <in.mp4> [out.gif] [width] [fps]}"
 OUT="${2:-${IN%.*}.gif}"
-W="${3:-720}"
+W="${3:-900}"
 FPS="${4:-20}"
 PAL="$(mktemp -t cgpal).png"
 
 # 1) build an optimal palette from the whole clip
 ffmpeg -y -i "$IN" -vf "fps=${FPS},scale=${W}:-1:flags=lanczos,palettegen=stats_mode=full" "$PAL" -loglevel error
-# 2) apply it (bayer dithering keeps gradients clean at small file size)
+# 2) apply it (error-diffusion dithering keeps line art and tiny labels cleaner)
 ffmpeg -y -i "$IN" -i "$PAL" \
-  -lavfi "fps=${FPS},scale=${W}:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=3" \
+  -lavfi "fps=${FPS},scale=${W}:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=sierra2_4a" \
   "$OUT" -loglevel error
 rm -f "$PAL"
 

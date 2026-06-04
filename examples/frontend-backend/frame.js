@@ -1,8 +1,6 @@
 /* ============================================================
-   FRAME — Frontend & Backend Architecture
-   metaphor: "flow"  -> vertical tiers + downward marching arrows.
-   The theme (a layered system) chose the metaphor; the look is the
-   shared design.js. Tiers read top->bottom as a request flows down.
+   FRAME — Web App Architecture
+   A compact flow: fewer tiers and shorter labels for GIF readability.
    ============================================================ */
 window.FRAME = {
   metaphor: "flow",
@@ -11,23 +9,19 @@ window.FRAME = {
   credit: "concept-gif",
   tiers: [
     { label: "Client", color: "blue", items: [
-      { label: "Browser",  icon: "browser", motion: "flow" },
-      { label: "Mobile App", icon: "user",  motion: "blink" },
+      { label: "Browser", icon: "browser", motion: "flow" },
+      { label: "Mobile",  icon: "user",    motion: "blink" },
+      { label: "Routing", icon: "git",     motion: "orbit" },
     ] },
-    { label: "Frontend", color: "teal", items: [
-      { label: "UI Components", icon: "layers", motion: "shuffle" },
-      { label: "App State",     icon: "cpu",    motion: "squish" },
-      { label: "Routing",       icon: "git",    motion: "orbit" },
-    ] },
-    { label: "API Layer", color: "green", items: [
-      { label: "Gateway",  icon: "plug",   motion: "flow" },
-      { label: "Auth",     icon: "lock",   motion: "draw" },
+    { label: "Application", color: "teal", items: [
+      { label: "UI",       icon: "layers", motion: "shuffle" },
+      { label: "State",    icon: "cpu",    motion: "squish" },
       { label: "Services", icon: "server", motion: "blink" },
     ] },
-    { label: "Data", color: "purple", items: [
-      { label: "Database", icon: "database",  motion: "pulse" },
-      { label: "Cache",    icon: "lightning", motion: "blink" },
-      { label: "Storage",  icon: "cloud",     motion: "glow" },
+    { label: "Platform", color: "green", items: [
+      { label: "Gateway",  icon: "plug",     motion: "flow" },
+      { label: "Auth",     icon: "lock",     motion: "draw" },
+      { label: "Database", icon: "database", motion: "pulse" },
     ] },
   ],
 };
