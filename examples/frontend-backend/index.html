@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en" data-resolution="square">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1080" />
+    <!-- GSAP vendored locally (no network at render). design.js = the look,
+         frame.js = the content + metaphor. Swap frame.js for any topic. -->
+    <script src="vendor/gsap.min.js"></script>
+    <script src="design.js"></script>
+    <script src="frame.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1080px; overflow: hidden; background: var(--bg, #eef1f6); }
+      #root { position: relative; width: 1080px; height: 1080px; background: var(--bg); }
+
+      .panel {
+        position: absolute; inset: 22px; border-radius: 40px;
+        background: var(--panel, #fff); border: 2px solid var(--panelBorder, #e6e9f0);
+        box-shadow: 0 24px 60px -30px rgba(20,28,46,.28);
+      }
+      .title-wrap { position: absolute; left: 0; right: 0; top: 52px; text-align: center; z-index: 6; }
+      /* Title + label fonts are mirrored from design.js here because HyperFrames
+         embeds fonts from STATIC CSS. Keep these in sync with design.js. */
+      .title {
+        font-family: 'Outfit', system-ui, sans-serif; font-weight: 800;
+        font-size: 70px; letter-spacing: -1.5px; color: var(--ink, #16202e); line-height: 1;
+      }
+      .kicker {
+        font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px;
+        letter-spacing: 3px; text-transform: uppercase; color: var(--accentKicker, #626c7e); margin-bottom: 14px;
+      }
+      .lines { position: absolute; inset: 0; z-index: 1; overflow: visible; }
+      .blobs { position: absolute; inset: 0; z-index: 0; }
+      .nodes { position: absolute; inset: 0; z-index: 4; }
+      .blob { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); }
+
+      .node {
+        position: absolute; transform: translate(-50%, -50%);
+        display: flex; flex-direction: column; align-items: center; text-align: center; z-index: 4;
+      }
+      .node-core { position: relative; display: grid; place-items: center; }
+      .node-glow {
+        position: absolute; inset: -40%; border-radius: 50%;
+        background: radial-gradient(circle, var(--glow) 0%, transparent 68%); opacity: .45; z-index: 0;
+      }
+      .disc { position: relative; border-radius: 50%; display: grid; place-items: center; z-index: 1; }
+      .node-icon { position: relative; z-index: 2; display: block; }
+      .node-icon svg { display: block; width: 100%; height: 100%; overflow: visible; }
+      .node-label {
+        font-family: 'Inter', system-ui, sans-serif; font-weight: 700; color: var(--ink, #16202e);
+        line-height: 1.08; margin-top: 12px; max-width: 190px;
+      }
+      .hub .disc { width: 116px; height: 116px; box-shadow: 0 16px 30px -14px rgba(20,28,46,.45); }
+      .hub .node-icon { width: 64px; height: 64px; color: #fff; }
+      .hub .node-label { font-size: 26px; font-weight: 800; letter-spacing: -.3px; margin-top: 13px; }
+      .sat .disc {
+        width: 70px; height: 70px; background: var(--panel, #fff);
+        border: 3px solid var(--ring); box-shadow: 0 10px 20px -12px rgba(20,28,46,.35);
+      }
+      .sat .node-icon { width: 39px; height: 39px; color: var(--ink2); }
+      .sat .node-label { font-size: 16px; font-weight: 600; color: var(--inkSoft, #434c5c); margin-top: 8px; max-width: 122px; line-height: 1.12; }
+
+      /* ---- flow metaphor: tiers ---- */
+      .tier-band { position: absolute; border-radius: 30px; box-sizing: border-box; z-index: 0; }
+      .tier-pill {
+        position: absolute; display: flex; align-items: center; height: 54px;
+        padding: 0 22px; border-radius: 14px; color: #fff; z-index: 3; white-space: nowrap;
+        font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -.2px;
+        box-shadow: 0 12px 24px -12px rgba(20,28,46,.5);
+      }
+      .fitem .disc { width: 88px; height: 88px; }
+      .fitem .node-icon { width: 50px; height: 50px; }
+      .fitem .node-label { font-size: 17px; max-width: 150px; }
+
+      .credit {
+        position: absolute; left: 46px; bottom: 38px; z-index: 7;
+        font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 18px;
+        color: var(--inkSoft, #8b94a3); letter-spacing: .2px; opacity: .8;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6"
+         data-width="1080" data-height="1080">
+      <div class="panel"></div>
+      <div class="blobs" id="blobs"></div>
+      <svg class="lines" id="lines" viewBox="0 0 1080 1080" preserveAspectRatio="none"></svg>
+      <div class="nodes" id="nodes"></div>
+      <div class="title-wrap" id="titlewrap"></div>
+      <div class="credit" id="credit"></div>
+    </div>
+
+    <!-- ============================================================
+         CONCEPT-GIF ENGINE (topic-agnostic).
+         Reads window.DESIGN (the look) + window.FRAME (content + metaphor).
+         FRAME.metaphor selects a layout in LAYOUTS (galaxy | flow); every
+         node gets one seamless, seek-safe micro-loop from MOTION.
+         Edit design.js / frame.js — NOT this block — per topic.
+         (Kept inline because HyperFrames hoists external src= scripts
+         ahead of the body, which this DOM-building code must run after.)
+         ============================================================ -->
+    <script>
+      (function () {
+        const DESIGN = window.DESIGN;
+        const FRAME = window.FRAME;
+
+        /* ---------- ICON KIT (viewBox 0 0 100 100, stroke=currentColor) ----------
+           Animatable parts carry data-* hooks the MOTION library targets. */
+        const S = `fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"`;
+        const SF = `fill="currentColor"`;
+        const ICONS = {
+          /* ---- concept / agent kit ---- */
+          bulb: `<g ${S}><path d="M50 16a23 23 0 0 1 14 41c-3 3-5 6-5 10H41c0-4-2-7-5-10a23 23 0 0 1 14-41Z"/><path d="M42 78h16M45 86h10"/><path data-draw d="M44 50l6 7 9-13"/></g>`,
+          harness: `<g ${S}><circle cx="50" cy="24" r="8"/><path d="M37 36l13 10 13-10"/><path d="M37 36l-4 40 17-6 17 6-4-40"/><path d="M50 46v30"/><path d="M33 58h34"/></g>`,
+          brain: `<g ${S}><path d="M44 22a12 12 0 0 0-12 12 11 11 0 0 0-5 16 11 11 0 0 0 6 17 11 11 0 0 0 11 9V22Z"/><path d="M56 22a12 12 0 0 1 12 12 11 11 0 0 1 5 16 11 11 0 0 1-6 17 11 11 0 0 1-11 9V22Z"/><path d="M50 22v54"/></g>`,
+          network: `<g ${S}><g data-orbit><circle cx="50" cy="22" r="7" ${SF}/><circle cx="24" cy="64" r="7" ${SF}/><circle cx="76" cy="64" r="7" ${SF}/></g><circle cx="50" cy="50" r="10"/><path d="M50 40V29M43 56l-13 5M57 56l13 5"/></g>`,
+          flow: `<g ${S}><rect x="20" y="22" width="22" height="16" rx="4"/><rect x="58" y="62" width="22" height="16" rx="4"/><path data-flow stroke-dasharray="7 7" d="M42 30h20a8 8 0 0 1 8 8v24"/></g>`,
+          link: `<g ${S}><g data-sway><rect x="20" y="38" width="34" height="24" rx="12"/><rect x="46" y="38" width="34" height="24" rx="12"/></g></g>`,
+          decide: `<g ${S}><circle cx="44" cy="44" r="22"/><path d="M60 60l16 16"/><path data-morph="a" d="M37 37l14 14M51 37 37 51"/><path data-morph="b" style="opacity:0" d="M35 45l7 8 12-15"/></g>`,
+          sandbox: `<g ${S}><path d="M28 44h44l-5 34a4 4 0 0 1-4 3H37a4 4 0 0 1-4-3Z"/><path d="M24 44h52"/><path data-sway d="M58 20l8 16M66 20l-8 6"/></g>`,
+          orchestra: `<g ${S}><circle cx="50" cy="24" r="8"/><circle cx="26" cy="74" r="8" ${SF}/><circle cx="50" cy="74" r="8" ${SF}/><circle cx="74" cy="74" r="8" ${SF}/><path d="M50 32v14M50 46 26 66M50 46v20M50 46l24 20"/></g>`,
+          eye: `<g ${S}><path d="M16 50s14-20 34-20 34 20 34 20-14 20-34 20-34-20-34-20Z"/><circle cx="50" cy="50" r="10" ${SF}/><path data-lid d="M16 50s14-18 34-18 34 18 34 18" fill="var(--panel,#fff)" stroke="var(--panel,#fff)" stroke-width="22"/></g>`,
+          compress: `<g ${S}><g data-squish><path d="M30 32v36M70 32v36"/><path d="M40 50h-8M40 50l-6-6M40 50l-6 6"/><path d="M60 50h8M60 50l6-6M60 50l6 6"/></g></g>`,
+          approve: `<g ${S}><circle data-spin cx="50" cy="50" r="26" stroke-dasharray="34 14"/><path data-draw d="M38 50l8 9 16-19"/></g>`,
+          evaluator: `<g ${S}><rect x="28" y="20" width="44" height="60" rx="6"/><path d="M40 20v-4h20v4"/><path d="M37 40h16M37 54h12"/><path data-draw d="M37 66l6 6 10-12"/></g>`,
+          papers: `<g ${S}><rect data-card x="28" y="30" width="40" height="50" rx="5"/><rect data-card x="36" y="24" width="40" height="50" rx="5" fill="var(--panel,#fff)"/><path d="M44 38h24M44 50h24M44 62h16"/></g>`,
+          graph: `<g ${S}><g data-orbit><circle cx="30" cy="34" r="7" ${SF}/><circle cx="72" cy="30" r="7" ${SF}/><circle cx="68" cy="70" r="7" ${SF}/><circle cx="28" cy="66" r="7" ${SF}/></g><circle cx="50" cy="50" r="8"/><path d="M36 38l8 8M66 35 56 45M62 65 56 56M34 62l10-8"/></g>`,
+          bars: `<g ${S}><path d="M22 80h56"/><rect data-bar x="28" y="52" width="11" height="26" rx="2" ${SF}/><rect data-bar x="45" y="40" width="11" height="38" rx="2" ${SF}/><rect data-bar x="62" y="58" width="11" height="20" rx="2" ${SF}/></g>`,
+          persona: `<g ${S}><path d="M30 82c0-12 9-20 20-20s20 8 20 20"/><circle cx="50" cy="36" r="16"/><path data-draw d="M44 36a6 6 0 0 1 12 0M50 30v12"/></g>`,
+          user: `<g ${S}><rect x="26" y="26" width="48" height="32" rx="4"/><path d="M20 70h60l-6-12H26Z"/><circle data-blink cx="50" cy="42" r="7" ${SF}/></g>`,
+          robots: `<g ${S}><g data-sway><rect x="22" y="40" width="24" height="22" rx="5"/><path d="M34 40v-8"/><circle cx="34" cy="30" r="3" ${SF}/><path d="M29 50h2M37 50h2"/></g><g data-sway><rect x="54" y="40" width="24" height="22" rx="5"/><path d="M66 40v-8"/><circle cx="66" cy="30" r="3" ${SF}/><path d="M61 50h2M69 50h2"/></g></g>`,
+          tools: `<g ${S}><g data-sway><path d="M30 30l14 14M28 28a8 8 0 0 0 10 11l28 28 6-6-28-28a8 8 0 0 0-11-10Z"/></g><g data-sway><path d="M70 26l-6 18-8 8 6 6 8-8 18-6"/></g></g>`,
+
+          /* ---- general technical kit (web, data, infra, code) ---- */
+          server: `<g ${S}><rect x="24" y="26" width="52" height="20" rx="4"/><rect x="24" y="54" width="52" height="20" rx="4"/><circle data-blink cx="34" cy="36" r="3" ${SF}/><path d="M46 36h22"/><circle data-blink cx="34" cy="64" r="3" ${SF}/><path d="M46 64h22"/></g>`,
+          database: `<g ${S}><ellipse cx="50" cy="28" rx="22" ry="9"/><path d="M28 28v44a22 9 0 0 0 44 0V28"/><path d="M28 50a22 9 0 0 0 44 0"/></g>`,
+          cloud: `<g ${S}><path d="M36 72a15 15 0 0 1-3-29 19 19 0 0 1 36-3 13 13 0 0 1 1 32Z"/></g>`,
+          browser: `<g ${S}><rect x="22" y="24" width="56" height="50" rx="5"/><path d="M22 38h56"/><circle cx="31" cy="31" r="2.5" ${SF}/><circle cx="39" cy="31" r="2.5" ${SF}/><circle cx="47" cy="31" r="2.5" ${SF}/><path data-flow stroke-dasharray="6 7" d="M30 56h40"/></g>`,
+          code: `<g ${S}><g data-sway><path d="M40 38 28 50l12 12"/></g><g data-sway><path d="M60 38 72 50 60 62"/></g><path d="M55 34 45 66"/></g>`,
+          plug: `<g ${S}><path d="M42 30v12M58 30v12"/><rect x="36" y="42" width="28" height="16" rx="4"/><path data-flow stroke-dasharray="5 6" d="M50 58v20"/></g>`,
+          gear: `<g ${S}><g data-spin><circle cx="50" cy="50" r="12"/><path d="M50 26v10M50 64v10M26 50h10M64 50h10M33 33l7 7M60 60l7 7M67 33l-7 7M40 60l-7 7"/></g></g>`,
+          shield: `<g ${S}><path d="M50 22 30 30v18c0 14 9 24 20 30 11-6 20-16 20-30V30Z"/><path data-draw d="M41 50l6 7 12-15"/></g>`,
+          chat: `<g ${S}><path d="M26 30h48a4 4 0 0 1 4 4v24a4 4 0 0 1-4 4H46l-12 10V62h-8a4 4 0 0 1-4-4V34a4 4 0 0 1 4-4Z"/><circle data-blink cx="40" cy="46" r="3" ${SF}/><circle data-blink cx="50" cy="46" r="3" ${SF}/><circle data-blink cx="60" cy="46" r="3" ${SF}/></g>`,
+          layers: `<g ${S}><path data-card d="M50 24 78 38 50 52 22 38Z"/><path d="M22 50l28 14 28-14M22 62l28 14 28-14"/></g>`,
+          terminal: `<g ${S}><rect x="22" y="26" width="56" height="44" rx="5"/><path d="M32 42l9 7-9 7"/><path data-blink d="M52 58h14"/></g>`,
+          clock: `<g ${S}><circle cx="50" cy="50" r="26"/><g data-spin><path d="M50 50V30"/></g><path d="M50 50l13 9"/></g>`,
+          search: `<g ${S}><circle cx="45" cy="45" r="20"/><path d="M59 59l15 15"/></g>`,
+          globe: `<g ${S}><g data-spin><circle cx="50" cy="50" r="26"/><ellipse cx="50" cy="50" rx="11" ry="26"/><path d="M24 50h52"/></g></g>`,
+          lightning: `<g ${S}><path data-blink fill="currentColor" fill-opacity=".16" d="M54 22 32 54h15l-4 24 23-32H51Z"/></g>`,
+          cpu: `<g ${S}><rect x="32" y="32" width="36" height="36" rx="5"/><rect data-squish x="43" y="43" width="14" height="14" rx="3"/><path d="M40 32v-8M50 32v-8M60 32v-8M40 76v-8M50 76v-8M60 76v-8M32 40h-8M32 50h-8M32 60h-8M76 40h8M76 50h8M76 60h8"/></g>`,
+          git: `<g ${S}><g data-orbit><circle cx="30" cy="36" r="6" ${SF}/><circle cx="70" cy="36" r="6" ${SF}/><circle cx="50" cy="70" r="6" ${SF}/></g><path d="M30 42v4a12 12 0 0 0 12 12h2M70 42v4a12 12 0 0 1-12 12h-2M50 58v6"/></g>`,
+          lock: `<g ${S}><rect x="30" y="46" width="40" height="30" rx="5"/><path data-draw d="M38 46v-8a12 12 0 0 1 24 0v8"/><circle cx="50" cy="60" r="4" ${SF}/></g>`,
+          doc: `<g ${S}><path d="M36 22h20l12 12v44a2 2 0 0 1-2 2H36a2 2 0 0 1-2-2V24a2 2 0 0 1 2-2Z"/><path d="M56 22v12h12"/><path d="M42 52h16M42 62h12"/></g>`,
+        };
+
+        /* ---------- shared DOM + helpers ---------- */
+        const root = document.documentElement;
+        Object.entries({
+          "--bg": DESIGN.bg, "--panel": DESIGN.panel, "--panelBorder": DESIGN.panelBorder,
+          "--ink": DESIGN.ink, "--inkSoft": DESIGN.inkSoft, "--accentKicker": DESIGN.kicker,
+        }).forEach(([k, v]) => root.style.setProperty(k, v));
+
+        const $blobs = document.getElementById("blobs");
+        const $lines = document.getElementById("lines");
+        const $nodes = document.getElementById("nodes");
+        const SVGNS = "http://www.w3.org/2000/svg";
+        const svgEl = (t, a) => { const e = document.createElementNS(SVGNS, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+        const hexToRgba = (hex, a) => {
+          const h = hex.replace("#", "");
+          const n = parseInt(h.length === 3 ? h.split("").map(c => c + c).join("") : h, 16);
+          return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+        };
+        const pal = (key) => DESIGN.palette[key] || DESIGN.palette.slate;
+
+        function makeNode({ kind, cls, x, y, label, icon, motion, palette, discBg, iconColor, ring }) {
+          const node = document.createElement("div");
+          node.className = "node " + (kind === "hub" ? "hub" : "sat") + (cls ? " " + cls : "");
+          node.style.left = x + "px"; node.style.top = y + "px";
+          if (motion) node.dataset.motion = motion;
+          node.style.setProperty("--glow", palette.glow);
+          node.style.setProperty("--ring", ring || palette.ring);
+          node.style.setProperty("--ink2", iconColor);
+          const discStyle = discBg ? `style="background:${discBg}"` : "";
+          node.innerHTML = `
+            <div class="node-core">
+              <div class="node-glow"></div>
+              <div class="disc" ${discStyle}>
+                <div class="node-icon" style="color:${iconColor}">
+                  <svg viewBox="0 0 100 100">${ICONS[icon] || ICONS.network}</svg>
+                </div>
+              </div>
+            </div>
+            <div class="node-label">${label}</div>`;
+          return node;
+        }
+
+        /* ---------- timeline + motion grammar (shared) ---------- */
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+        const LOOP = DESIGN.loop || 6;
+        const EASE = DESIGN.ease || "sine.inOut";
+
+        function yoyo(target, vars, half, phase = 0) {
+          if (!target || target.length === 0) return;
+          const halves = Math.round(LOOP / half);
+          const h = LOOP / (halves % 2 === 0 ? halves : halves + 1);
+          tl.to(target, { ...vars, duration: h, ease: EASE, yoyo: true, repeat: (LOOP / h) - 1 }, phase);
+        }
+        function cycle(target, vars, cyc, phase = 0) {
+          if (!target || target.length === 0) return;
+          const cycles = Math.max(1, Math.round(LOOP / cyc));
+          const c = LOOP / cycles;
+          tl.to(target, { ...vars, duration: c, ease: "none", repeat: cycles - 1 }, phase);
+        }
+        const q = (node, sel) => node.querySelectorAll(sel);
+        const has = (node, sel) => node.querySelector(sel);
+
+        // Every motion spans the FULL loop [0,LOOP] (no start offset) so it
+        // returns to its base state at the seam. Variety comes from different
+        // periods per motion, not from staggered starts.
+        const MOTION = {
+          glow(n)  { yoyo(has(n, ".node-glow"), { opacity: .92, scale: 1.22 }, 1.5); },
+          pulse(n) { yoyo(has(n, ".node-icon"), { scale: 1.12 }, 1.0); },
+          bob(n)   { yoyo(has(n, ".node-icon"), { y: -9 }, 1.5); },
+          squish(n){ const t = has(n, "[data-squish]") || has(n, ".node-icon"); gsap.set(t, { transformOrigin: "50% 50%" }); yoyo(t, { scaleX: .68 }, 1.0); },
+          sway(n)  { const t = q(n, "[data-sway]").length ? q(n, "[data-sway]") : has(n, ".node-icon"); gsap.set(t, { transformOrigin: "50% 50%", svgOrigin: "50 50" }); yoyo(t, { rotation: 10 }, 1.5); },
+          spin(n)  { const t = has(n, "[data-spin]") || has(n, ".node-icon"); gsap.set(t, { svgOrigin: "50 50", transformOrigin: "50% 50%" }); cycle(t, { rotation: 360 }, 3); },
+          // rotate the WHOLE icon so dots keep their connector lines attached
+          orbit(n) { const t = has(n, ".node-icon"); gsap.set(t, { transformOrigin: "50% 50%" }); cycle(t, { rotation: 360 }, 6); },
+          blink(n) {
+            const lid = has(n, "[data-lid]"), scr = q(n, "[data-blink]");
+            if (lid) { gsap.set(lid, { svgOrigin: "50 50", scaleY: 0 }); tl.to(lid, { scaleY: 1, duration: .12, ease: "power1.in", yoyo: true, repeat: 1 }, 1.6); tl.to(lid, { scaleY: 1, duration: .12, ease: "power1.in", yoyo: true, repeat: 1 }, 4.2); }
+            else if (scr.length) { yoyo(scr, { opacity: .2 }, .75); }
+          },
+          flow(n)  { cycle(q(n, "[data-flow]"), { strokeDashoffset: -56 }, 2); },
+          draw(n)  { const t = q(n, "[data-draw]"); t.forEach((p) => { const L = p.getTotalLength ? p.getTotalLength() : 40; gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }); }); yoyo(t, { strokeDashoffset: 0 }, 1.5); },
+          bars(n)  { const b = q(n, "[data-bar]"); b.forEach((r) => gsap.set(r, { transformOrigin: "50% 100%" })); yoyo(b, { scaleY: .42 }, 1.5); },
+          shuffle(n) { const c = q(n, "[data-card]"); c.forEach((r, i) => yoyo(r, { y: i === 0 ? 7 : -7 }, 1.5)); },
+          morph(n) { const a = has(n, '[data-morph="a"]'), b = has(n, '[data-morph="b"]'); if (a && b) { yoyo(a, { opacity: 0 }, 1.5); yoyo(b, { opacity: 1 }, 1.5); } },
+        };
+
+        function catmullRomClosed(pts) {
+          const n = pts.length, p = (i) => pts[((i % n) + n) % n];
+          let d = `M ${p(0)[0].toFixed(1)} ${p(0)[1].toFixed(1)} `;
+          for (let i = 0; i < n; i++) {
+            const p0 = p(i - 1), p1 = p(i), p2 = p(i + 1), p3 = p(i + 2);
+            const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+            const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+            d += `C ${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)} `;
+          }
+          return d + "Z";
+        }
+
+        /* ============================================================
+           LAYOUTS — one builder per metaphor. Each populates the DOM
+           and may add structural ambient tweens to tl (drift, marching
+           flow). Per-node MOTION is applied afterward, shared.
+           ============================================================ */
+        const LAYOUTS = {
+          // GALAXY: hubs + orbiting satellites + weaving orbit. For anatomies,
+          // taxonomies, "parts of a whole".
+          galaxy(F) {
+            const BOX = { x: 92, y: 200, w: 896, h: 812 }, RS = 880, CC = [540, 560];
+            const nx = (n) => BOX.x + n * BOX.w, ny = (n) => BOX.y + n * BOX.h;
+            const D2R = Math.PI / 180;
+            const hubXY = {};
+            (F.zones || []).forEach((z) => {
+              const P = pal(z.color), cx = nx(z.x), cy = ny(z.y), R = z.r * RS;
+              hubXY[z.id] = [cx, cy];
+              const blob = document.createElement("div");
+              blob.className = "blob";
+              Object.assign(blob.style, { left: cx + "px", top: cy + "px", width: R * 2 + "px", height: R * 2 + "px", background: P.tint, opacity: ".06" });
+              $blobs.appendChild(blob);
+              $lines.appendChild(svgEl("circle", { cx, cy, r: R, fill: "none", stroke: P.ring, "stroke-width": 2, "stroke-dasharray": "2 13", "stroke-linecap": "round", opacity: ".55", class: "zone-ring" }));
+              // Distribute satellites so they fan AWAY from the canvas centre
+              // (keeps clusters from colliding). A near-centre hub spreads its
+              // satellites evenly around a full circle. Per-sat a/d still override.
+              const sats = z.sats || [];
+              const m = sats.length;
+              const outward = Math.atan2(cy - CC[1], cx - CC[0]);
+              const full = Math.hypot(cx - CC[0], cy - CC[1]) < 150;
+              const spread = full ? 360 : Math.min(250, Math.max(70, m * 50));
+              const step = full ? (m ? 360 / m : 0) : (m > 1 ? spread / (m - 1) : 0);
+              const base = full ? -Math.PI / 2 : outward - (spread / 2) * D2R;
+              sats.forEach((s, k) => {
+                let a, dist;
+                if (typeof s.a === "number") { a = (s.a - 90) * D2R; dist = R * (s.d || 1.1); }
+                else { a = base + k * step * D2R; dist = R * (s.d || (full ? 1.12 : 1.24)); }
+                const px = cx + dist * Math.cos(a), py = cy + dist * Math.sin(a);
+                s._xy = [px, py];
+                $lines.appendChild(svgEl("line", { x1: cx, y1: cy, x2: px, y2: py, stroke: P.ring, "stroke-width": 1.5, opacity: ".26" }));
+              });
+              $nodes.appendChild(makeNode({ kind: "hub", x: cx, y: cy, label: z.label, icon: z.hub.icon, motion: z.hub.motion, palette: P, discBg: P.hub, iconColor: "#fff" }));
+              sats.forEach((s) => $nodes.appendChild(makeNode({ kind: "sat", x: s._xy[0], y: s._xy[1], label: s.label, icon: s.icon, motion: s.motion, palette: P, iconColor: P.tint, ring: P.ring })));
+            });
+            const pts = (F.orbit || []).map((id) => hubXY[id]).filter(Boolean);
+            if (pts.length >= 3) {
+              const path = svgEl("path", { d: catmullRomClosed(pts), fill: "none", stroke: DESIGN.ink, "stroke-width": 2, "stroke-dasharray": "2 15", "stroke-linecap": "round", opacity: ".38", id: "harness-orbit" });
+              $lines.insertBefore(path, $lines.firstChild);
+              gsap.set(path, { svgOrigin: "540 560", transformOrigin: "50% 50%" });
+              tl.to(path, { rotation: 1.2, duration: 3, ease: EASE, yoyo: true, repeat: 1 }, 0);
+            }
+            gsap.set(".zone-ring", { transformOrigin: "50% 50%" });
+            tl.to(".zone-ring", { rotation: -3.5, duration: 3, ease: EASE, yoyo: true, repeat: 1 }, 0);
+          },
+
+          // FLOW: vertical tiers + components + downward marching arrows.
+          // For architectures, pipelines, request/response, layered systems.
+          flow(F) {
+            const BOX = { x: 64, y: 196, w: 952, h: 836 };
+            const tiers = F.tiers || [];
+            const N = tiers.length || 1;
+            const gap = 52;
+            const bandH = (BOX.h - (N - 1) * gap) / N;
+            tiers.forEach((t, i) => {
+              const P = pal(t.color);
+              const top = BOX.y + i * (bandH + gap);
+              const cy = top + bandH / 2;
+              // band
+              const band = document.createElement("div");
+              band.className = "tier-band";
+              Object.assign(band.style, { left: BOX.x + "px", top: top + "px", width: BOX.w + "px", height: bandH + "px", background: hexToRgba(P.tint, .07), border: `2px dashed ${P.ring}` });
+              $blobs.appendChild(band);
+              // tier pill (label) on the left
+              const pill = document.createElement("div");
+              pill.className = "tier-pill";
+              pill.innerHTML = `<span>${t.label}</span>`; // inner span so contrast samples the pill bg, not the band
+              Object.assign(pill.style, { left: (BOX.x + 26) + "px", top: (cy - 27) + "px", background: P.hub });
+              $nodes.appendChild(pill);
+              // components, laid in a row to the right of the pill
+              const items = t.items || [];
+              const xStart = BOX.x + 250, xEnd = BOX.x + BOX.w - 70;
+              const span = xEnd - xStart;
+              items.forEach((it, j) => {
+                const x = items.length === 1 ? (xStart + xEnd) / 2 : xStart + (span * j) / (items.length - 1);
+                $nodes.appendChild(makeNode({ kind: "sat", cls: "fitem", x, y: cy, label: it.label, icon: it.icon, motion: it.motion, palette: P, iconColor: P.hub, ring: P.ring }));
+              });
+              // downward marching arrow into the next tier
+              if (i < N - 1) {
+                const ax = BOX.x + BOX.w * 0.5;
+                const y1 = top + bandH + 6, y2 = top + bandH + gap - 6;
+                const arrow = svgEl("path", { d: `M${ax} ${y1} V ${y2}`, fill: "none", stroke: DESIGN.ink, "stroke-width": 3, "stroke-dasharray": "6 8", "stroke-linecap": "round", opacity: ".5", class: "flow-arrow" });
+                $lines.appendChild(arrow);
+                $lines.appendChild(svgEl("path", { d: `M${ax - 7} ${y2 - 9} L${ax} ${y2} L${ax + 7} ${y2 - 9}`, fill: "none", stroke: DESIGN.ink, "stroke-width": 3, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: ".5" }));
+              }
+            });
+            // marching flow down the arrows (seamless)
+            cycle(document.querySelectorAll(".flow-arrow"), { strokeDashoffset: -56 }, 2, 0);
+          },
+        };
+
+        /* ---------- render ---------- */
+        document.getElementById("titlewrap").innerHTML =
+          (FRAME.kicker ? `<div class="kicker">${FRAME.kicker}</div>` : "") +
+          `<div class="title">${FRAME.title}</div>`;
+        document.getElementById("credit").textContent = FRAME.credit || "";
+
+        const metaphor = FRAME.metaphor || "galaxy";
+        (LAYOUTS[metaphor] || LAYOUTS.galaxy)(FRAME);
+
+        // apply one micro-loop to every node (each spans the full seamless loop)
+        Array.from(document.querySelectorAll(".node")).forEach((node) => {
+          const m = node.dataset.motion;
+          if (MOTION[m]) MOTION[m](node);
+        });
+
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>

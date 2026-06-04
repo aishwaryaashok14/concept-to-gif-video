@@ -1,0 +1,9 @@
+# HyperFrames / build caches
+**/.hyperframes/
+**/capture/
+node_modules/
+.DS_Store
+
+# keep final renders (gif + mp4) but drop scratch frames
+**/renders/*.png
+**/renders/palette.png
