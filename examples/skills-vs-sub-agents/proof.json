@@ -1,0 +1,38 @@
+{
+  "base_size": [900, 900],
+  "samples": 8,
+  "max_edge_density": 0.12,
+  "max_tile_edge_density": 0.26,
+  "max_frame_delta": 0.075,
+  "max_delta_spike_ratio": 2.5,
+  "max_loop_delta": 0.065,
+  "lanes": [
+    {
+      "id": "skills-to-thread-arrow",
+      "rect": [342, 380, 112, 92],
+      "axis": "x",
+      "color": "#3b82f6",
+      "tolerance": 100,
+      "min_coverage": 0.24,
+      "max_gap": 0.58
+    },
+    {
+      "id": "thread-to-agents-arrow",
+      "rect": [468, 378, 130, 96],
+      "axis": "x",
+      "color": "#128a54",
+      "tolerance": 105,
+      "min_coverage": 0.24,
+      "max_gap": 0.60
+    },
+    {
+      "id": "agent-link-field",
+      "rect": [555, 315, 230, 235],
+      "axis": "x",
+      "color": "#128a54",
+      "tolerance": 105,
+      "min_coverage": 0.42,
+      "max_gap": 0.35
+    }
+  ]
+}

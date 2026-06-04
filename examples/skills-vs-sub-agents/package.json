@@ -1,0 +1,15 @@
+{
+  "name": "skills-vs-sub-agents",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.6.71 preview",
+    "check": "npx --yes hyperframes@0.6.71 lint && npx --yes hyperframes@0.6.71 validate && npx --yes hyperframes@0.6.71 inspect",
+    "render:gif": "python3 render_gif.py",
+    "render:gif:uhd": "python3 render_gif.py --ultra-hd",
+    "proof": "python3 ../../concept-gif/proof-check.py renders/skills-vs-sub-agents.gif --manifest proof.json --out renders/proof/skills-vs-sub-agents",
+    "proof:uhd": "python3 ../../concept-gif/proof-check.py renders/skills-vs-sub-agents-ultra-hd.gif --manifest proof.json --out renders/proof/skills-vs-sub-agents-ultra-hd",
+    "render": "npx --yes hyperframes@0.6.71 render",
+    "publish": "npx --yes hyperframes@0.6.71 publish"
+  }
+}

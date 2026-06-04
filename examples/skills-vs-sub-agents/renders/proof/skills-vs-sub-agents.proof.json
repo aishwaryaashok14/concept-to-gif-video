@@ -1,0 +1,410 @@
+{
+  "gif": "renders/skills-vs-sub-agents.gif",
+  "passed": true,
+  "frame_count": 108,
+  "size": [
+    900,
+    900
+  ],
+  "sampled_frames": [
+    0,
+    15,
+    31,
+    46,
+    61,
+    76,
+    92,
+    107
+  ],
+  "checks": [
+    {
+      "id": "overall_edge_density",
+      "passed": true,
+      "value": 0.0583,
+      "limit": 0.12
+    },
+    {
+      "id": "local_tile_edge_density",
+      "passed": true,
+      "value": 0.1488,
+      "limit": 0.26
+    },
+    {
+      "id": "max_frame_delta",
+      "passed": true,
+      "value": 0.0039,
+      "limit": 0.075
+    },
+    {
+      "id": "delta_spike_ratio",
+      "passed": true,
+      "value": 1.4421,
+      "limit": 2.5
+    },
+    {
+      "id": "loop_seam_delta",
+      "passed": true,
+      "value": 0.0122,
+      "limit": 0.065
+    },
+    {
+      "id": "lane_continuity",
+      "passed": true,
+      "failed": []
+    }
+  ],
+  "lane_results": {
+    "0": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7946,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2054,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0077,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 0.9826,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0174,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ],
+    "15": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7946,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2054,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0077,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ],
+    "31": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7857,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2143,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.6,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.2077,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 0.9087,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0913,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ],
+    "46": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7946,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2054,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9769,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0077,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 0.9826,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0087,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ],
+    "61": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7946,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2054,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.7692,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.1615,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ],
+    "76": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7857,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2143,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9769,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0154,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ],
+    "92": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7946,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2054,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9769,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0154,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ],
+    "107": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7946,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2054,
+        "rect": [
+          342,
+          380,
+          112,
+          92
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0077,
+        "rect": [
+          468,
+          378,
+          130,
+          96
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          555,
+          315,
+          230,
+          235
+        ]
+      }
+    ]
+  }
+}

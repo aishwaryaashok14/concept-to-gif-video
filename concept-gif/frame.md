@@ -23,9 +23,37 @@ It is the human-readable schema; its machine mirror per topic is a
 
 Both share the same look, icon kit, and motion grammar. Adding a third
 metaphor (e.g. `timeline`, `network`, `radial`) means adding one builder to
-`LAYOUTS` in `index.html` — see §6.
+`LAYOUTS` in `index.html` — see §7.
 
-## 2. Schema
+## 2. Pick a density
+
+Before writing `frame.js`, choose how much of the concept should fit in one
+loop. This can be a user question: **"How dense should this GIF be: sparse,
+balanced, or dense?"**
+
+| density    | best for                                      | galaxy budget                         | flow budget                         | label style                  |
+| ---------- | --------------------------------------------- | ------------------------------------- | ----------------------------------- | ---------------------------- |
+| `sparse`   | quick social share, executive summary, teaser | 2-3 zones, 2-3 satellites each        | 2-3 tiers, 2-3 items each           | 1-2 word labels              |
+| `balanced` | default explainer GIF                         | 3-4 zones, 3 satellites each          | 3-4 tiers, 2-3 items each           | short labels, ~18 chars max  |
+| `dense`    | reference map where detail matters            | 4 zones, 3-4 satellites each          | 4-5 tiers, 3-4 items each           | only if proof-check passes   |
+
+Hard cap for a readable square GIF:
+
+- **galaxy:** keep total visible nodes at or below 16 for normal use.
+- **flow:** keep total visible items at or below 14 for normal use.
+- Prefer fewer nodes with clearer labels over complete coverage.
+- If the concept needs more detail, make multiple GIFs instead of one dense one.
+
+Suggested user question:
+
+```text
+How dense should this be?
+- Sparse: clean high-level summary
+- Balanced: default explainer
+- Dense: more complete, may need stricter proof-checking
+```
+
+## 3. Schema
 
 ### Shared top-level fields
 
@@ -80,7 +108,7 @@ tiers: [   // top -> bottom; arrows flow downward between tiers
 
 Use 3-5 tiers and 1-4 items each. The engine sizes bands automatically.
 
-## 3. Icon catalog
+## 4. Icon catalog
 
 `icon` names map to SVGs in `index.html` `ICONS`. Each renders white inside a
 hub, palette-colored inside a satellite/component.
@@ -92,9 +120,9 @@ hub, palette-colored inside a satellite/component.
   chat layers terminal clock search globe lightning cpu git lock doc`
 
 Pick the closest match; an unknown name falls back to `network`. To add a new
-one, see §5.
+one, see §6.
 
-## 4. Motion catalog
+## 5. Motion catalog
 
 Every node takes exactly **one** `motion`. All are seamless over the loop and
 seek-safe. Some need a matching `data-*` hook inside the icon (noted below);
@@ -119,16 +147,16 @@ if the hook is absent the motion degrades gracefully to the whole icon.
 Keep it calm: one motion per node, subtle amplitude. The loop should feel
 alive, not busy.
 
-## 5. Add a new icon
+## 6. Add a new icon
 
 1. Draw it in a `0 0 100 100` viewBox using
    `fill="none" stroke="currentColor" stroke-width≈6.5`, round caps.
-2. Mark the animated part with the right `data-*` hook from §4 (e.g. wrap a
+2. Mark the animated part with the right `data-*` hook from §5 (e.g. wrap a
    spinnable group in `<g data-spin>…</g>`).
 3. Add it to the `ICONS` object in `index.html` (and keep the engine template
    in sync). Use `currentColor` so it adapts to hub/satellite contexts.
 
-## 6. Add a new metaphor
+## 7. Add a new metaphor
 
 Add a builder to `LAYOUTS` in `index.html`:
 
@@ -143,11 +171,15 @@ LAYOUTS.timeline = function (F) {
 Document its fields here and you're done — `FRAME.metaphor = "timeline"` routes
 to it.
 
-## 7. Worked examples
+## 8. Worked examples
 
-- **`examples/harnessed-llm-agent`** — `galaxy`. "A Harnessed LLM Agent": four
-  zones (Skills, Harness, Memory, Protocols) of orbiting capabilities.
-- **`examples/frontend-backend`** — `flow`. "Web App Architecture": four tiers
-  (Client → Frontend → API Layer → Data) a request flows through.
+- **`examples/harnessed-llm-agent`** — `galaxy`. "A Harnessed LLM Agent":
+  three zones (Skills, Runtime, Memory) with short labels.
+- **`examples/frontend-backend`** — `flow`. "Web App Architecture": three tiers
+  (Client → Application → Platform) a request flows through.
+- **`examples/rag-answer-loop`** — `flow`. "RAG Answer Loop": compact
+  retrieval-to-answer pipeline.
+- **`examples/skills-vs-sub-agents`** — `flow` plus rendered assets,
+  proof-check manifest, and normal/UHD fallback GIF renderer.
 
 Read either `frame.js` next to its rendered GIF to see the schema in practice.

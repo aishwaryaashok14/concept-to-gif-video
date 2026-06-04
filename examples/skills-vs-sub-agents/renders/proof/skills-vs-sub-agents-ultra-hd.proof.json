@@ -1,0 +1,410 @@
+{
+  "gif": "renders/skills-vs-sub-agents-ultra-hd.gif",
+  "passed": true,
+  "frame_count": 108,
+  "size": [
+    1800,
+    1800
+  ],
+  "sampled_frames": [
+    0,
+    15,
+    31,
+    46,
+    61,
+    76,
+    92,
+    107
+  ],
+  "checks": [
+    {
+      "id": "overall_edge_density",
+      "passed": true,
+      "value": 0.0303,
+      "limit": 0.12
+    },
+    {
+      "id": "local_tile_edge_density",
+      "passed": true,
+      "value": 0.0784,
+      "limit": 0.26
+    },
+    {
+      "id": "max_frame_delta",
+      "passed": true,
+      "value": 0.0032,
+      "limit": 0.075
+    },
+    {
+      "id": "delta_spike_ratio",
+      "passed": true,
+      "value": 1.2454,
+      "limit": 2.5
+    },
+    {
+      "id": "loop_seam_delta",
+      "passed": true,
+      "value": 0.0118,
+      "limit": 0.065
+    },
+    {
+      "id": "lane_continuity",
+      "passed": true,
+      "failed": []
+    }
+  ],
+  "lane_results": {
+    "0": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7902,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2098,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0077,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ],
+    "15": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7902,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2098,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9885,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0077,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ],
+    "31": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7857,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2143,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0038,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ],
+    "46": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7902,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2098,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9962,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0038,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ],
+    "61": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7902,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2098,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9962,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0038,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ],
+    "76": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7902,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2098,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0038,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ],
+    "92": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7902,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2098,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0038,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ],
+    "107": [
+      {
+        "id": "skills-to-thread-arrow",
+        "passed": true,
+        "coverage": 0.7902,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.58,
+        "gap_ratio": 0.2098,
+        "rect": [
+          684,
+          760,
+          224,
+          184
+        ]
+      },
+      {
+        "id": "thread-to-agents-arrow",
+        "passed": true,
+        "coverage": 0.9923,
+        "min_coverage": 0.24,
+        "max_gap_ratio": 0.6,
+        "gap_ratio": 0.0077,
+        "rect": [
+          936,
+          756,
+          260,
+          192
+        ]
+      },
+      {
+        "id": "agent-link-field",
+        "passed": true,
+        "coverage": 1.0,
+        "min_coverage": 0.42,
+        "max_gap_ratio": 0.35,
+        "gap_ratio": 0.0,
+        "rect": [
+          1110,
+          630,
+          460,
+          470
+        ]
+      }
+    ]
+  }
+}

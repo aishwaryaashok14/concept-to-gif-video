@@ -51,6 +51,30 @@ re-order or add keys for more pillars. Keep zones visually distinct.
 below 4.5:1 (3:1 for the kicker), darken `inkSoft`/`kicker` — don't invent a
 new color.
 
+## Style presets
+
+Style can be a user choice before editing `design.js`. Keep the choices few and
+meaningful; do not offer endless palette knobs.
+
+Suggested user question:
+
+```text
+Which visual style should this use?
+- Editorial light: clean default infographic
+- Technical blueprint: sharper, cooler, more diagram-like
+- Product polish: warmer, presentation-ready
+```
+
+| style | use when | design direction |
+| --- | --- | --- |
+| `editorial-light` | default, clear explainers | white panel, soft categorical hues, calm micro-motion |
+| `technical-blueprint` | engineering, architecture, systems | cooler blue/teal/slate palette, thinner lines, tighter labels |
+| `product-polish` | stakeholder/shareable output | slightly warmer palette, stronger hierarchy, softer shadows |
+
+The selected style should update `design.js` tokens and, if needed, static font
+families in `index.html`. It should not change the concept structure; that is
+the job of `frame.js`.
+
 ## Typography
 
 | Slot              | Font     | Weight | Size  |
