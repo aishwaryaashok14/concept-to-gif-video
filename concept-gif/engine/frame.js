@@ -20,6 +20,7 @@
             bars persona user robots tools
    motions: glow pulse bob squish sway spin orbit blink flow draw
             bars shuffle morph
+   roles:   input context decision execution quality feedback platform
    ============================================================ */
 window.FRAME = {
   title: "How RAG Works",
@@ -30,7 +31,7 @@ window.FRAME = {
       hub: { icon: "graph", motion: "orbit" },
       sats: [
         { label: "Query Embedding", icon: "network", motion: "pulse", a: 320, d: 1.04 },
-        { label: "Vector Search",   icon: "decide",  motion: "morph", a: 40,  d: 1.05 },
+        { label: "Vector Search",   role: "decision", a: 40,  d: 1.05 },
         { label: "Top-K Chunks",    icon: "papers",  motion: "shuffle", a: 200, d: 1.06 },
       ] },
     { id: "augment", label: "Augment", color: "green", x: 0.52, y: 0.62, r: 0.16,

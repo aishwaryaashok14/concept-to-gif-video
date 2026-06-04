@@ -1,11 +1,10 @@
 # design.md — the visual system (topic-agnostic)
 
-This file defines **how a concept GIF looks**. It is the human-readable
-source of truth; its machine mirror is [`engine/design.js`](engine/design.js),
-which the engine reads at runtime. Change a token here, change it in
-`design.js`, re-render. Nothing in this file is topic-specific — the same
-look is reused for every concept. (For *what* the GIF says, see
-[`frame.md`](frame.md).)
+This file defines **how a concept GIF looks**. Its machine mirror is
+[`engine/design.js`](engine/design.js), which now acts as a reusable design
+registry: base tokens + named themes + composition presets + semantic roles.
+Most GIFs should choose a `theme` or `preset` in `frame.js` instead of editing
+`design.js` per topic. (For *what* the GIF says, see [`frame.md`](frame.md).)
 
 ---
 
@@ -51,9 +50,9 @@ re-order or add keys for more pillars. Keep zones visually distinct.
 below 4.5:1 (3:1 for the kicker), darken `inkSoft`/`kicker` — don't invent a
 new color.
 
-## Style presets
+## Themes And Presets
 
-Style can be a user choice before editing `design.js`. Keep the choices few and
+Style can be a user choice before writing `frame.js`. Keep the choices few and
 meaningful; do not offer endless palette knobs.
 
 Suggested user question:
@@ -70,10 +69,78 @@ Which visual style should this use?
 | `editorial-light` | default, clear explainers | white panel, soft categorical hues, calm micro-motion |
 | `technical-blueprint` | engineering, architecture, systems | cooler blue/teal/slate palette, thinner lines, tighter labels |
 | `product-polish` | stakeholder/shareable output | slightly warmer palette, stronger hierarchy, softer shadows |
+| `minimal-saas` | operational/product diagrams | restrained UI-like styling, lower shadow, tighter radius |
 
-The selected style should update `design.js` tokens and, if needed, static font
-families in `index.html`. It should not change the concept structure; that is
-the job of `frame.js`.
+Set the selected theme in `frame.js`:
+
+```js
+window.FRAME = {
+  theme: "product-polish",
+  title: "Claude Code for PMs",
+  /* ... */
+};
+```
+
+Presets bundle a theme with product decisions like default metaphor, role order,
+advisory density, and motion intensity. The engine consumes `motionScale` by
+scaling micro-motion amplitudes, and consumes `roleOrder` by assigning role
+colors/defaults to tiers or zones that omit both `color` and `role`.
+
+| preset | theme | use when |
+| --- | --- | --- |
+| `executive-explainer` | `editorial-light` | sparse, high-level stakeholder summary |
+| `engineering-map` | `technical-blueprint` | denser system or architecture map |
+| `product-workflow` | `product-polish` | staged PM/product/launch workflows |
+| `social-share` | `product-polish` | fewer nodes, stronger hierarchy |
+
+`density` is authoring metadata: use it to decide how much content belongs in
+one GIF and how strict proof-checking should be. The engine still auto-condenses
+galaxy rendering from actual node count; it does not remove or add nodes from
+the preset density value.
+
+Use a preset when the output type is clear:
+
+```js
+window.FRAME = {
+  preset: "product-workflow",
+  title: "Claude Code for PMs",
+  tiers: [/* ... */],
+};
+```
+
+Frames may still provide focused overrides without forking the whole design:
+
+```js
+design: {
+  ink: "#201a14",
+  radius: { panel: "36px" },
+}
+```
+
+The selected theme or preset should not change the topic structure; that is
+still the job of `frame.js`. If you change title/label fonts, also edit the
+static font-family lines in `index.html`.
+
+## Semantic Roles
+
+Nodes can use semantic `role`s instead of hardcoded color/icon/motion choices.
+The engine maps roles through `DESIGN.roles`.
+
+| role | default color | default icon | default motion |
+| --- | --- | --- | --- |
+| `input` | `teal` | `chat` | `flow` |
+| `context` | `blue` | `search` | `draw` |
+| `decision` | `amber` | `decide` | `morph` |
+| `execution` | `purple` | `code` | `sway` |
+| `quality` | `green` | `approve` | `draw` |
+| `feedback` | `rose` | `graph` | `bars` |
+| `platform` | `slate` | `server` | `pulse` |
+
+You can still override any node explicitly:
+
+```js
+{ label: "Repo changes", role: "execution", icon: "git", motion: "orbit" }
+```
 
 ## Typography
 

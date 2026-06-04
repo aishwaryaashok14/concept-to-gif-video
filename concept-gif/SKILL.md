@@ -17,8 +17,8 @@ Make a looping, animated concept GIF about **any** topic. One fixed engine
 renders a data file (`frame.js`) with a theme file (`design.js`) into a seamless
 square loop where every node has a subtle, seek-safe micro-motion.
 
-**The model:** `design.js` = the look (shared) · `frame.js` = the content +
-**metaphor** (per topic) · `index.html` = the engine (never edited per topic).
+**The model:** `design.js` = theme/preset registry · `frame.js` = the content +
+**metaphor / preset choices** (per topic) · `index.html` = the engine.
 
 > The big idea: **the theme picks the metaphor, not just the palette.** A
 > taxonomy → `galaxy`; an architecture → `flow`. Pick the structure that matches
@@ -26,8 +26,8 @@ square loop where every node has a subtle, seek-safe micro-motion.
 
 ## Workflow
 
-1. **Understand the concept, density, style, and metaphor.** Read
-   [`frame.md`](frame.md) §§1–2 and [`design.md`](design.md) §Style presets.
+1. **Understand the concept, density, style/preset, and metaphor.** Read
+   [`frame.md`](frame.md) §§1–2 and [`design.md`](design.md) §Themes And Presets.
    If the user has not implied a detail level, ask:
    "How dense should this be: sparse, balanced, or dense?"
    - `sparse` — clean high-level summary
@@ -45,6 +45,12 @@ square loop where every node has a subtle, seek-safe micro-motion.
    in plain chat. If the user does not answer, default to `balanced` and
    `editorial-light`.
 
+   If the output type is clear, prefer a preset over manual style choices:
+   - `executive-explainer` — sparse stakeholder summary
+   - `engineering-map` — technical or architecture reference map
+   - `product-workflow` — staged product or PM workflow
+   - `social-share` — punchier sparse shareable GIF
+
    Then decompose the topic into groups:
    - `galaxy` — groups orbit a center (anatomies, taxonomies, "N pillars of X").
    - `flow` — groups are stages a thing passes through top→bottom (architectures,
@@ -59,14 +65,15 @@ square loop where every node has a subtle, seek-safe micro-motion.
    copy one from `examples/`).
 
 3. **Write `frame.js`.** This is the only file you author per topic. Follow the
-   schema, density budget, and the **icon catalog** + **motion catalog** in
-   [`frame.md`](frame.md). Give every node an `icon` and one `motion`.
+   schema and density budget in [`frame.md`](frame.md). Prefer `preset`, `theme`,
+   and semantic `role` fields first; add explicit `color`, `icon`, and `motion`
+   only where the defaults do not fit.
 
-4. **Apply the selected style in `design.js`.** Palette, loop length, easing —
-   see [`design.md`](design.md). If you change the title/label **font**, also
-   edit the two `font-family` lines in `index.html` (HyperFrames embeds fonts
-   from static CSS) and use a supported font (Inter, Outfit, Montserrat,
-   Poppins…).
+4. **Apply any focused design overrides in `frame.js`.** Use `theme`, `preset`,
+   or a small `design: { ... }` override. Edit `design.js` only when adding a
+   reusable theme, preset, role, or palette for future GIFs. If you change the
+   title/label **font**, also edit the two `font-family` lines in `index.html`
+   (HyperFrames embeds fonts from static CSS) and use a supported font.
 
 5. **Verify the source.** Always run before rendering:
    ```bash
@@ -106,14 +113,15 @@ square loop where every node has a subtle, seek-safe micro-motion.
 - **Density is a product decision:** do not pack in every subtopic by default.
   Ask for sparse / balanced / dense when unclear, and split into multiple GIFs
   when a dense version would exceed the readable node budget.
-- **Style is an intake decision:** ask for editorial-light / technical-blueprint
-  / product-polish when unclear. Keep style changes in `design.js`; keep concept
-  structure in `frame.js`.
+- **Style is an intake decision:** ask for a theme or preset when unclear. Keep
+  reusable themes/presets in `design.js`; keep per-GIF choices in `frame.js`.
 
 ## Extending
 
 - **New icon** → add an SVG to `ICONS` in `index.html` with the right `data-*`
   hook (frame.md §6).
+- **New theme/preset/role** → add it to `DESIGN_SYSTEM` in `design.js`, then
+  select it from `frame.js`.
 - **New metaphor** → add a builder to `LAYOUTS` in `index.html` (frame.md §7),
   then `FRAME.metaphor` routes to it.
 
@@ -123,5 +131,6 @@ square loop where every node has a subtle, seek-safe micro-motion.
 - [`frame.md`](frame.md) — the content: metaphor catalog, frame.js schema, icon catalog, motion catalog.
 - `examples/harnessed-llm-agent` — sparse/balanced galaxy.
 - `examples/frontend-backend` and `examples/rag-answer-loop` — compact flows.
+- `examples/product-workflow-roles` — preset + semantic roles coverage.
 - `examples/skills-vs-sub-agents` — complete generated example with GIF,
   ultra-HD GIF, proof manifest, and fallback renderer.

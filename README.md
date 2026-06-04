@@ -12,17 +12,20 @@ has a subtle micro-motion. Built on [HyperFrames](https://hyperframes.heygen.com
 ## The idea: separate look, content, and metaphor
 
 A "theme" should decide the **metaphor** (the visual structure), not just the
-palette. So three things are split:
+palette. The project now treats design as a small registry of reusable themes,
+composition presets, and semantic roles, so most new GIFs can stay content-first
+instead of hand-picking every color, icon, and motion.
 
 | File         | Role                              | Changes per…            |
 | ------------ | --------------------------------- | ----------------------- |
-| `design.js`  | the **look** (palette, type, motion feel) | brand / style    |
-| `frame.js`   | the **content** + the **metaphor**        | every topic      |
+| `design.js`  | reusable **themes, presets, roles**       | system extension |
+| `frame.js`   | the **content** + selected preset/theme   | every topic      |
 | `index.html` | the **engine** (icons, motion grammar, layouts) | never (per topic) |
 
-To make a GIF about a new topic you write **one `frame.js`** — pick a metaphor,
-choose a density and style, list the groups, give every node an icon and a
-motion. The engine does the rest.
+To make a GIF about a new topic you write **one `frame.js`** — pick a metaphor
+or preset, choose density/style, list the groups, and use semantic roles where
+possible. You can still override a node's color, icon, or motion when the
+defaults do not fit.
 
 ## Ground-Up System
 
@@ -44,13 +47,17 @@ actual GIF before sharing.
 
 ```
 window.FRAME = {
-  metaphor: "galaxy",            // or "flow"
-  title: "A Harnessed LLM Agent",
-  zones: [
-    { id:"skills", label:"Skills", color:"blue", x:0.2, y:0.4, r:0.15,
-      hub:{ icon:"bulb", motion:"glow" },
-      sats:[ { label:"Decision Heuristics", icon:"decide", motion:"morph" }, … ] },
-    …
+  preset: "product-workflow",     // implies theme + flow metaphor
+  title: "Claude Code for PMs",
+  tiers: [
+    { label:"Signal", role:"input", items:[
+      { label:"Customer signal" },
+      { label:"Repo context", role:"context" },
+    ] },
+    { label:"Build", role:"execution", items:[
+      { label:"Prototype" },
+      { label:"Repo changes", icon:"git", motion:"orbit" },
+    ] },
   ],
 };
 ```
@@ -164,6 +171,7 @@ examples/
   harnessed-llm-agent/  galaxy — "A Harnessed LLM Agent"
   frontend-backend/     flow   — "Web App Architecture"
   rag-answer-loop/      flow   — "RAG Answer Loop"
+  product-workflow-roles/ flow — preset + semantic roles
   skills-vs-sub-agents/ flow   — "Skills vs Sub-Agents"
 ```
 

@@ -43,6 +43,8 @@ Hard cap for a readable square GIF:
 - **flow:** keep total visible items at or below 14 for normal use.
 - Prefer fewer nodes with clearer labels over complete coverage.
 - If the concept needs more detail, make multiple GIFs instead of one dense one.
+- Preset `density` is authoring guidance; the engine does not add/remove nodes
+  from it. Galaxy rendering still auto-condenses from actual satellite count.
 
 Suggested user question:
 
@@ -60,12 +62,18 @@ How dense should this be?
 ```js
 window.FRAME = {
   metaphor: "galaxy" | "flow",   // default "galaxy"
+  theme:    "editorial-light" | "technical-blueprint" | "product-polish" | "minimal-saas",
+  preset:   "executive-explainer" | "engineering-map" | "product-workflow" | "social-share",
   title:   "A Harnessed LLM Agent",
   kicker:  "Anatomy of an Agent", // small eyebrow above the title (optional)
   credit:  "concept-gif",         // bottom-left tag (optional)
+  design:  { ink: "#16202e" },     // optional focused design token overrides
   /* ...metaphor-specific fields below... */
 };
 ```
+
+`theme`, `preset`, and `design` are optional. If `preset` provides a default
+metaphor, the frame can omit `metaphor`; an explicit `metaphor` always wins.
 
 ### `galaxy` fields
 
@@ -74,12 +82,13 @@ zones: [
   {
     id: "skills",            // unique id (used by orbit)
     label: "Skills",         // hub label
-    color: "blue",           // a key in design.js palette
+    color: "blue",           // a key in design.js palette, or use role
+    role: "execution",       // optional semantic default for color/icon/motion
     x: 0.205, y: 0.46,       // normalized 0..1 hub position in the diagram box
     r: 0.150,                // zone radius (fraction of canvas; ~0.14-0.17)
     hub:  { icon: "bulb", motion: "glow" },
     sats: [                  // 2-6 satellites
-      { label: "Operational Procedure", icon: "flow", motion: "flow", a: 318, d: 1.02 },
+      { label: "Operational Procedure", role: "input", icon: "flow", motion: "flow", a: 318, d: 1.02 },
       // a = compass angle around the hub (0=N, 90=E, 180=S, 270=W)
       // d = distance as a multiple of the zone radius (~1.0-1.15)
     ],
@@ -98,15 +107,37 @@ neighbors). Run `hyperframes inspect` to catch label overflow.
 tiers: [   // top -> bottom; arrows flow downward between tiers
   {
     label: "Client",        // tier pill (left)
-    color: "blue",          // a key in design.js palette
+    color: "blue",          // a key in design.js palette, or use role
+    role: "input",          // optional semantic default for color/icon/motion
     items: [                // 1-4 components in a row
-      { label: "Browser", icon: "browser", motion: "flow" },
+      { label: "Browser", role: "context", icon: "browser", motion: "flow" },
     ],
   },
 ],
 ```
 
 Use 3-5 tiers and 1-4 items each. The engine sizes bands automatically.
+
+### Semantic roles
+
+Use roles when you want content to describe meaning instead of visual choices.
+The engine maps each role to a default color, icon, and motion; explicit
+`color`, `icon`, or `motion` values still override the role.
+
+Built-in roles: `input context decision execution quality feedback platform`.
+
+```js
+tiers: [
+  { label: "Signal", role: "input", items: [
+    { label: "Customer signal" },
+    { label: "Repo context", role: "context" },
+  ] },
+  { label: "Build", role: "execution", items: [
+    { label: "Prototype" },
+    { label: "Repo changes", icon: "git", motion: "orbit" },
+  ] },
+]
+```
 
 ## 4. Icon catalog
 
@@ -179,6 +210,8 @@ to it.
   (Client → Application → Platform) a request flows through.
 - **`examples/rag-answer-loop`** — `flow`. "RAG Answer Loop": compact
   retrieval-to-answer pipeline.
+- **`examples/product-workflow-roles`** — `flow`. Demonstrates `preset`,
+  `roleOrder`, and semantic role defaults.
 - **`examples/skills-vs-sub-agents`** — `flow` plus rendered assets,
   proof-check manifest, and normal/UHD fallback GIF renderer.
 
