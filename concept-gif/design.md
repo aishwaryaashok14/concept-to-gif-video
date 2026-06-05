@@ -64,12 +64,28 @@ Which visual style should this use?
 - Product polish: warmer, presentation-ready
 ```
 
+**Polish themes** keep the same categorical hues (blue=blue, green=green, …) and
+only shift temperature, neutrals, and styling:
+
 | style | use when | design direction |
 | --- | --- | --- |
 | `editorial-light` | default, clear explainers | white panel, soft categorical hues, calm micro-motion |
 | `technical-blueprint` | engineering, architecture, systems | cooler blue/teal/slate palette, thinner lines, tighter labels |
 | `product-polish` | stakeholder/shareable output | slightly warmer palette, stronger hierarchy, softer shadows |
 | `minimal-saas` | operational/product diagrams | restrained UI-like styling, lower shadow, tighter radius |
+
+**Bold color stories** *recolor the whole palette* into a new categorical scheme
+— reach for these when the user wants a visibly different color scheme, not just
+a different polish. Here the seven palette keys are **slots, not literal hues**
+(e.g. in `sunset`, key `purple` renders as coral); a frame still picks one key
+per zone for separation, and the theme decides the actual colors.
+
+| style | mood | the seven slots render as |
+| --- | --- | --- |
+| `sunset` | warm, energetic | coral · gold · rose · orchid · tangerine · raspberry · taupe |
+| `ocean` | cool, calm | indigo · azure · emerald · teal · gold · magenta · steel |
+| `forest` | earthy, natural | clay · moss · forest · denim · ochre · rust · stone |
+| `berry` | vivid jewel | violet · blue · teal · gold · amber · magenta · plum |
 
 Set the selected theme in `frame.js`:
 

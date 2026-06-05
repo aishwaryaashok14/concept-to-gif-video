@@ -36,9 +36,12 @@ square loop where every node has a subtle, seek-safe micro-motion.
 
    If the user has not implied a visual style, ask:
    "Which visual style should this use?"
+   Polish themes (same hues, different finish):
    - `editorial-light` — clean default infographic
    - `technical-blueprint` — sharper, cooler, more diagram-like
    - `product-polish` — warmer, presentation-ready
+   Bold color stories (a visibly different color scheme):
+   - `sunset` (warm) · `ocean` (cool) · `forest` (earthy) · `berry` (vivid)
 
    When an ask-question / choice tool is available, use it for these choices so
    the user can pick density and style quickly. Otherwise ask the same questions
