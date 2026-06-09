@@ -1,189 +1,294 @@
-# concept → gif
+# Concept to GIF Video
 
-Turn **any concept** into a looping, animated infographic GIF. Describe the idea
-as data; a fixed engine renders it as a seamless square loop where every element
-has a subtle micro-motion. Built on [HyperFrames](https://hyperframes.heygen.com)
-(HTML-as-video) with a reusable data-driven diagram engine.
+![A Harnessed LLM Agent](examples/harnessed-llm-agent/renders/harness.gif)
 
-|  `galaxy` metaphor — anatomies / taxonomies  |  `flow` metaphor — architectures / pipelines  |
-| :---: | :---: |
-| ![A Harnessed LLM Agent](examples/harnessed-llm-agent/renders/harness.gif) | ![Web App Architecture](examples/frontend-backend/renders/fb.gif) |
+> Turn one concept into a looping animated infographic by describing the idea as data.
 
-## The idea: separate look, content, and metaphor
+[![Built with HyperFrames](https://img.shields.io/badge/Built_with-HyperFrames-black)](https://hyperframes.heygen.com)
+[![GSAP](https://img.shields.io/badge/Animation-GSAP-88ce02)](https://gsap.com)
+[![GitHub stars](https://img.shields.io/github/stars/aishwaryaashok14/concept-to-gif-video?style=social)](https://github.com/aishwaryaashok14/concept-to-gif-video/stargazers)
 
-A "theme" should decide the **metaphor** (the visual structure), not just the
-palette. The project now treats design as a small registry of reusable themes,
-composition presets, and semantic roles, so most new GIFs can stay content-first
-instead of hand-picking every color, icon, and motion.
+**Concept to GIF Video** is a tiny generator for animated concept maps. You write
+one `frame.js` file that describes the idea, choose a visual metaphor, and a
+fixed HTML engine renders the whole thing as a deterministic square video or GIF.
 
-| File         | Role                              | Changes per…            |
-| ------------ | --------------------------------- | ----------------------- |
-| `design.js`  | reusable **themes, presets, roles**       | system extension |
-| `frame.js`   | the **content** + selected preset/theme   | every topic      |
-| `index.html` | the **engine** (icons, motion grammar, layouts) | never (per topic) |
+It is not a hand-animated GIF.
 
-To make a GIF about a new topic you write **one `frame.js`** — pick a metaphor
-or preset, choose density/style, list the groups, and use semantic roles where
-possible. You can still override a node's color, icon, or motion when the
-defaults do not fit.
+It is a little machine.
 
-## Ground-Up System
+**Built by Aishwarya Ashok** - [X](https://x.com/aishashok14) · [LinkedIn](https://www.linkedin.com/in/aishwarya-ashok/)
 
-Everything needed to produce and review a concept GIF lives in this repo:
-
-| Layer | File(s) | Purpose |
-| --- | --- | --- |
-| Intake | `frame.md`, `design.md`, `SKILL.md` | ask concept, density, style, and metaphor |
-| Content schema | `frame.js` | topic data: groups, labels, icons, motions |
-| Visual system | `design.js` | palette, typography notes, loop timing |
-| Engine | `index.html` | layouts, icons, motion grammar, timeline |
-| Render | `render-gif.sh` or example renderers | MP4-to-GIF or local Pillow fallback |
-| Proof check | `proof-check.py`, `proof.json` | clutter, jitter, seam, and connector-lane checks |
-| Outputs | `examples/*/renders/` | normal GIF, ultra-HD GIF, previews, proof reports |
-
-The workflow is intentionally opinionated: ask the right user choices up front,
-generate from structured data, render deterministic motion, then proof-check the
-actual GIF before sharing.
-
-```
+```js
 window.FRAME = {
-  preset: "product-workflow",     // implies theme + flow metaphor
-  title: "Claude Code for PMs",
+  metaphor: "flow",
+  title: "RAG Answer Loop",
   tiers: [
-    { label:"Signal", role:"input", items:[
-      { label:"Customer signal" },
-      { label:"Repo context", role:"context" },
+    { label: "Question", items: [
+      { label: "User Query", icon: "user", motion: "blink" },
+      { label: "Embed", icon: "network", motion: "pulse" },
     ] },
-    { label:"Build", role:"execution", items:[
-      { label:"Prototype" },
-      { label:"Repo changes", icon:"git", motion:"orbit" },
+    { label: "Retrieve", items: [
+      { label: "Search", icon: "search", motion: "pulse" },
+      { label: "Chunks", icon: "papers", motion: "shuffle" },
     ] },
   ],
 };
 ```
 
-## Metaphors
+## Gallery
 
-- **`galaxy`** — groups orbit a center: a hub (icon + label) ringed by
-  satellites, with a dashed orbit weaving through. For *parts of a whole*.
-- **`flow`** — stacked, color-coded tiers of components joined by downward
-  marching arrows. For *stages a thing passes through* (request → response).
+These are real outputs from the repo. Each one starts as structured concept data,
+then becomes a clean animated loop.
 
-The theme picks the metaphor. Adding a third (`timeline`, `network`, …) is one
-builder in `LAYOUTS` — see [`concept-gif/frame.md`](concept-gif/frame.md) §7.
+| Galaxy: anatomy / taxonomy | Flow: architecture / pipeline |
+| :---: | :---: |
+| ![A Harnessed LLM Agent](examples/harnessed-llm-agent/renders/harness.gif) | ![Web App Architecture](examples/frontend-backend/renders/fb.gif) |
+| `examples/harnessed-llm-agent` | `examples/frontend-backend` |
 
-## Density
+| Skills vs Sub-Agents | Claude Code for PMs |
+| :---: | :---: |
+| ![Skills vs Sub-Agents](examples/skills-vs-sub-agents/renders/skills-vs-sub-agents.gif) | ![Claude Code for PMs](examples/claude-code-for-pms/renders/claude-code-for-pms.gif) |
+| `examples/skills-vs-sub-agents` | `examples/claude-code-for-pms` |
 
-Ask this before building when the request does not already imply detail level:
+## The idea
 
-```text
-How dense should this be?
-- Sparse: clean high-level summary
-- Balanced: default explainer
-- Dense: more complete, may need stricter proof-checking
-```
+I keep noticing that the interesting part of this project is not only the GIF
+itself. It is the decision to keep the idea, the taste, and the engine separate.
 
-Use `balanced` by default. As a rule of thumb:
+`frame.js` is the script.
 
-| density | galaxy budget | flow budget |
+`design.js` is the wardrobe.
+
+`index.html` is the stage.
+
+HyperFrames is the camera.
+
+That split changes the whole feeling of making the GIF. You are not nudging
+pixels around. You are teaching a page how to perform an idea.
+
+For the observability and evals GIF, `frame.js` is the only file that is really
+about observability. It names the zones: eval suite, observability, quality
+signals, and closing the loop. It lists the satellites: golden datasets, traces
+and spans, hallucination rate, CI quality gates, drift detection.
+
+But the same engine can read a different `frame.js` and become a web app request
+flow, a RAG answer loop, an agent anatomy, or a product workflow.
+
+Same stage. New script.
+
+**If the structure is good, the content can keep changing without asking the
+whole system to reinvent itself.**
+
+## How it works
+
+The project has three main files:
+
+| File | Role | You edit it |
 | --- | --- | --- |
-| sparse | 2-3 zones, 2-3 satellites each | 2-3 tiers, 2-3 items each |
-| balanced | 3-4 zones, 3 satellites each | 3-4 tiers, 2-3 items each |
-| dense | 4 zones, 3-4 satellites each | 4-5 tiers, 3-4 items each |
+| `frame.js` | the content: title, groups, labels, icons, motions, metaphor | every new topic |
+| `design.js` | the look: themes, palettes, presets, semantic roles, loop timing | only to add reusable styles |
+| `index.html` | the engine: layouts, icons, motion grammar, GSAP timeline | almost never |
 
-If the idea needs more than about 16 visible nodes, split it into multiple GIFs
-instead of making one crowded one.
+The engine supports two visual metaphors:
 
-## Style
+- **`galaxy`**: hubs with satellites orbiting a shared idea. Good for anatomies,
+  taxonomies, and "parts of a whole".
+- **`flow`**: stacked tiers joined by downward arrows. Good for pipelines,
+  architectures, request flows, and staged workflows.
 
-Ask this alongside density when the request does not already imply a look:
+The theme is not just a palette. It helps pick the structure that makes the idea
+easier to understand.
+
+## Why it renders cleanly
+
+The animation uses a paused GSAP timeline. Every visible node gets one small
+motion: `glow`, `pulse`, `bob`, `sway`, `spin`, `orbit`, `blink`, `flow`, `draw`,
+`bars`, `shuffle`, or `morph`.
+
+HyperFrames does not record the page by waiting and hoping the browser keeps up.
+It opens the HTML page, finds the registered timeline, seeks to an exact time,
+and screenshots that frame. Frame 90 is "set the playhead to 3.0 seconds, then
+capture."
+
+That is why the repo avoids `Math.random()`, `Date.now()`, and network-fetched
+animation dependencies. The same timestamp should produce the same pixels.
+
+Determinism is care.
+
+## Quick start
+
+Clone the repo:
+
+```bash
+git clone https://github.com/aishwaryaashok14/concept-to-gif-video.git
+cd concept-to-gif-video
+```
+
+Copy the reusable engine into a new project:
+
+```bash
+cp -r concept-gif/engine my-gif
+cd my-gif
+```
+
+Edit `frame.js` with your concept, then run the HyperFrames checks:
+
+```bash
+npx hyperframes lint
+npx hyperframes validate
+npx hyperframes inspect
+```
+
+Render the MP4:
+
+```bash
+npx hyperframes render --quality standard --resolution square -o renders/out.mp4
+```
+
+Convert the MP4 to a GIF:
+
+```bash
+../concept-gif/render-gif.sh renders/out.mp4 renders/out.gif
+```
+
+Proof-check the rendered GIF:
+
+```bash
+python3 ../concept-gif/proof-check.py renders/out.gif --out renders/proof/out
+```
+
+The proof check samples the final GIF, not the source file. It looks for clutter,
+jitter, loop-seam jumps, and connector-lane problems when a `proof.json` manifest
+is present.
+
+## Make a good concept GIF
+
+Keep the idea smaller than your first instinct.
+
+| Choice | Use when | Typical size |
+| --- | --- | --- |
+| `sparse` | you want a crisp shareable summary | 2-3 groups, 2-3 items each |
+| `balanced` | you want the default explainer | 3-4 groups, 2-3 items each |
+| `dense` | you need a fuller technical map | 4-5 groups, 3-4 items each |
+
+Pick the metaphor before the details:
+
+- Use `galaxy` when the idea is an anatomy: `Skills`, `Runtime`, `Memory`.
+- Use `flow` when the idea is a sequence: `Question`, `Retrieve`, `Generate`,
+  `Ground`.
+
+Short labels survive GIF size better than clever labels.
+
+## Examples to learn from
+
+### Observability & Evals
+
+Path: `observability-evals/frame.js`
+
+A dense `galaxy` map with four zones: `Eval Suite`, `Observability`, `Quality
+Signals`, and `Closing the Loop`. It shows how much detail the engine can carry
+when the concept genuinely needs a technical map.
+
+![Observability & Evals proof sheet](observability-evals/renders/proof/out.proof.png)
+
+### A Harnessed LLM Agent
+
+Path: `examples/harnessed-llm-agent/frame.js`
+
+A clean `galaxy` example with three hubs: `Skills`, `Runtime`, and `Memory`.
+This is the easiest place to see how an anatomy turns into a visual structure.
+
+### Web App Architecture
+
+Path: `examples/frontend-backend/frame.js`
+
+A compact `flow` example. It maps a request through `Client`, `Application`, and
+`Platform` with short labels that still read at small sizes.
+
+### RAG Answer Loop
+
+Path: `examples/rag-answer-loop/frame.js`
+
+A pipeline-shaped example: `Question` to `Retrieve` to `Generate` to `Ground`.
+RAG wants a flow because the important thing is sequence.
+
+### Product Workflow Roles
+
+Path: `examples/product-workflow-roles/frame.js`
+
+The clearest example of presets and semantic roles. It uses
+`preset: "product-workflow"` so roles like `context` and `quality` can carry
+visual meaning without hand-picking every node.
+
+### Skills vs Sub-Agents
+
+Path: `examples/skills-vs-sub-agents/frame.js`
+
+A deliberately sparse flow. The point is not to show everything. The point is to
+survive being viewed small.
+
+## What makes it different
+
+- **Content-first authoring.** Most new GIFs only need a new `frame.js`.
+- **Metaphor before decoration.** The visual structure is chosen from the shape
+  of the idea, not only from color taste.
+- **Tiny motions, clean loop.** Each node gets one seek-safe micro-motion.
+- **Local animation dependency.** GSAP is vendored so rendering does not depend
+  on a CDN.
+- **Rendered-output proofing.** The checker looks at the actual GIF after MP4
+  conversion.
+- **Reusable taste.** Themes, presets, and semantic roles live in `design.js` so
+  future GIFs can inherit them.
+
+## Repo structure
 
 ```text
-Which visual style should this use?
-- Editorial light: clean default infographic
-- Technical blueprint: sharper, cooler, more diagram-like
-- Product polish: warmer, presentation-ready
+.
+├── README.md
+├── concept-gif/
+│   ├── SKILL.md
+│   ├── design.md
+│   ├── frame.md
+│   ├── mini-brief-blog.md
+│   ├── proof-check.py
+│   ├── render-gif.sh
+│   └── engine/
+│       ├── index.html
+│       ├── design.js
+│       ├── frame.js
+│       └── vendor/gsap.min.js
+├── examples/
+│   ├── harnessed-llm-agent/
+│   ├── frontend-backend/
+│   ├── rag-answer-loop/
+│   ├── product-workflow-roles/
+│   ├── skills-vs-sub-agents/
+│   └── claude-code-for-pms/
+├── observability-evals/
+└── multi-agent-orchestration/
 ```
 
-Keep style changes in `design.js`; keep concept structure in `frame.js`. See
-[`concept-gif/design.md`](concept-gif/design.md) for the preset directions.
-
-## Motion grammar
-
-Every node gets exactly one seamless, seek-safe micro-loop:
-`glow · pulse · bob · squish · sway · spin · orbit · blink · flow · draw · bars ·
-shuffle · morph`. They loop perfectly (no seam) because each spans the full loop
-and returns to its start; variety comes from different periods, not staggered
-starts.
-
-## Make your own
-
-```bash
-cp -r concept-gif/engine my-gif && cd my-gif
-$EDITOR frame.js                      # describe your concept (see concept-gif/frame.md)
-npx hyperframes lint && npx hyperframes validate && npx hyperframes inspect
-npx hyperframes render --quality standard --resolution square -o renders/out.mp4
-../concept-gif/render-gif.sh renders/out.mp4   # mp4 -> looping gif
-python3 ../concept-gif/proof-check.py renders/out.gif --out renders/proof/out
-# add --manifest proof.json when the GIF has arrows/connectors to protect
-```
-
-## Proof Check
-
-Run a proof check after rendering a GIF. It samples frames through the loop and
-flags common readability failures before the GIF is shared:
-
-- **clutter** — too much local edge density in one area
-- **blocked paths** — manifest-defined arrow/connector lanes lose continuity
-- **jitter** — one frame changes much more than neighboring frames
-- **loop seam** — the last frame does not return cleanly to the first frame
-
-For arrows and connectors, add a small `proof.json` next to the example. Each
-lane is a rectangle around the expected path, with the connector color and
-minimum continuity thresholds. See
-[`examples/skills-vs-sub-agents/proof.json`](examples/skills-vs-sub-agents/proof.json).
-
-Some examples also include a fallback Pillow renderer for environments where
-headless browser rendering is unavailable. For example:
-
-```bash
-cd examples/skills-vs-sub-agents
-npm run render:gif       # 900x900
-npm run render:gif:uhd   # 1800x1800 ultra-HD
-npm run proof:uhd
-```
-
-Generated proof outputs are part of the review trail: keep the `.proof.json`
-for machine-readable checks and the `.proof.png` contact sheet for quick visual
-review.
-
-## Repo layout
-
-```
-concept-gif/            the reusable skill
-  SKILL.md              when/how to use it (Claude Code skill)
-  design.md             the look — spec for design.js
-  frame.md              the content — schema + metaphor / icon / motion catalogs
-  proof-check.py        rendered GIF proof-checker
-  render-gif.sh         mp4 -> looping gif helper (ffmpeg)
-  engine/               index.html (engine) · design.js · frame.js · vendor/gsap.min.js
-examples/
-  harnessed-llm-agent/  galaxy — "A Harnessed LLM Agent"
-  frontend-backend/     flow   — "Web App Architecture"
-  rag-answer-loop/      flow   — "RAG Answer Loop"
-  product-workflow-roles/ flow — preset + semantic roles
-  skills-vs-sub-agents/ flow   — "Skills vs Sub-Agents"
-```
+The reusable system lives in `concept-gif/`. The example folders are real GIF
+projects you can copy, inspect, and modify.
 
 ## Notes
 
-- Output is a **square, seamless, looping** GIF (rendered MP4 → GIF via ffmpeg).
-- Files under `examples/*/renders/` are generated outputs; re-render them after
+- Output is a square looping GIF, rendered as MP4 first and converted with
+  `ffmpeg`.
+- Files under `examples/*/renders/` are generated outputs. Re-render after
   changing an example's `frame.js` or engine files.
-- Self-contained: GSAP is vendored locally; rendering is deterministic and needs
-  no network.
-- Fonts (Outfit / Inter by default) are embedded by HyperFrames from static CSS —
-  to change them, edit the two `font-family` lines in `index.html` and pick a
-  supported font.
+- Fonts are embedded by HyperFrames from static CSS. If you change fonts, update
+  the CSS in `index.html` and the matching values in `design.js`.
+- If an idea needs more than about 16 visible nodes, split it into multiple GIFs.
+
+## GitHub social preview
+
+Use one of the preview images or GIF stills as the repository social preview:
+
+```text
+GitHub repo -> Settings -> Social preview -> Upload image
+```
+
+A good default is `examples/skills-vs-sub-agents/renders/skills-vs-sub-agents-preview.png`.
 
 Made with [HyperFrames](https://hyperframes.heygen.com).
