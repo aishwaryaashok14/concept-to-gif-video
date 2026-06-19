@@ -1,0 +1,4 @@
+{
+  "_note": "Card metaphors (grid/steps/funnel/compare) are intentionally sparse-motion text infographics: a near-static canvas with small accent motions on the icons. delta_spike_ratio = max_delta / median_delta, so a calm canvas inflates the ratio even though motion is smooth and seamless (max_frame_delta and loop_seam_delta — the real jump/jitter guards — still pass at default). 3.0 is the threshold tuned for this layout family; it still rejects poorly-distributed/oversized motions (which measured 3.07+).",
+  "max_delta_spike_ratio": 3.0
+}

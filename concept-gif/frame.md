@@ -20,10 +20,18 @@ It is the human-readable schema; its machine mirror per topic is a
 | ---------- | ------------------------------------------ | ------------------------------ | ------------------------------------------------------- |
 | `galaxy`   | parts of a whole, orbiting a center        | `zones[]` → hub + `sats[]`     | anatomies, taxonomies, "the N pillars of X", ecosystems |
 | `flow`     | stages a thing passes through, top→bottom  | `tiers[]` → `items[]`          | architectures, pipelines, request/response, layered systems |
+| `grid`     | a matrix of buckets / categories           | `cells[]` → `items[]`          | frameworks, "the N Ps", 2×2s, comparison matrices       |
+| `steps`    | an ordered process / checklist             | `steps[]`                      | how-tos, playbooks, numbered checklists                 |
+| `funnel`   | progressive filtering / qualification      | `stages[]` (+ `drop[]`)        | "find your niche", lead/qualification funnels, elimination |
+| `compare`  | two sides weighed against each other       | `left{}` vs `right{}`          | before/after, old vs new, myth vs reality, do/don't     |
 
-Both share the same look, icon kit, and motion grammar. Adding a third
-metaphor (e.g. `timeline`, `network`, `radial`) means adding one builder to
-`LAYOUTS` in `index.html` — see §7.
+`galaxy` and `flow` are the **diagram** metaphors (network/architecture look).
+`grid`, `steps`, `funnel`, and `compare` are the **creator-card** metaphors —
+bold, color-coded gradient boxes in the LinkedIn-infographic style of creators
+like Vincent Pierri. They pair naturally with the `creator-pop` theme and the
+`linkedin-*` presets (see [`design.md`](design.md)). All six share the same icon
+kit and motion grammar. Adding a seventh means adding one builder to `LAYOUTS`
+in `index.html` — see §7.
 
 ## 2. Pick a density
 
@@ -61,9 +69,11 @@ How dense should this be?
 
 ```js
 window.FRAME = {
-  metaphor: "galaxy" | "flow",   // default "galaxy"
-  theme:    "editorial-light" | "technical-blueprint" | "product-polish" | "minimal-saas",
-  preset:   "executive-explainer" | "engineering-map" | "product-workflow" | "social-share",
+  metaphor: "galaxy" | "flow" | "grid" | "steps" | "funnel" | "compare",  // default "galaxy"
+  theme:    "editorial-light" | "technical-blueprint" | "product-polish" | "minimal-saas"
+            | "sunset" | "ocean" | "forest" | "berry" | "creator-pop",
+  preset:   "executive-explainer" | "engineering-map" | "product-workflow" | "social-share"
+            | "linkedin-grid" | "linkedin-steps" | "linkedin-funnel" | "linkedin-compare",
   title:   "A Harnessed LLM Agent",
   kicker:  "Anatomy of an Agent", // small eyebrow above the title (optional)
   credit:  "concept-gif",         // bottom-left tag (optional)
@@ -139,6 +149,54 @@ tiers: [
 ]
 ```
 
+### Creator-card fields (`grid` · `steps` · `funnel` · `compare`)
+
+These build bold, color-coded gradient cards (the LinkedIn-infographic look).
+Each card carries one icon that takes a `motion`; text on the colored fills is
+auto-darkened for WCAG AA. Omit `color`/`role` and the engine auto-rotates
+categorical colors. Use the `linkedin-*` presets to inherit `creator-pop` + the
+right metaphor. **Keep motion even and moderate** across cards (e.g. `pulse`,
+`bob`, `sway`, `shuffle`) — on a mostly-static infographic, one oversized motion
+(`bars`, `spin`) or a near-static one (`glow`) skews proof-check's spike ratio.
+
+```js
+// grid — a matrix of buckets (the "4 Ps", a 2×2, a comparison matrix)
+metaphor: "grid",
+cols: 2,                         // optional; default 2 for ≤4 cells, else 3
+cells: [
+  { label: "Personal", color: "rose", icon: "user", motion: "pulse",
+    items: ["Stories", "Wins & failures", "Lessons learned"] },   // 2-4 short items
+],
+
+// steps — an ordered checklist down a marching progress rail
+metaphor: "steps",
+steps: [
+  { n: 1, label: "Pain point", color: "rose", icon: "decide", motion: "morph",
+    detail: "Solves a problem people feel" },                     // detail optional
+],
+
+// funnel — narrowing filter stages; rejected chips fade + drop away each loop
+metaphor: "funnel",
+stages: [
+  { label: "Can you teach it?", color: "teal", icon: "bulb", motion: "pulse",
+    note: "subtitle on the bar",       // optional
+    keep: "4 left",                    // optional survivors badge (right of bar)
+    drop: ["Too niche"] },             // optional rejected chips — keep them SHORT (≤ ~12 chars)
+],
+
+// compare — two columns weighed against each other, with a center VS badge
+metaphor: "compare",
+vs: "VS",                              // optional center badge text
+left:  { label: "Looks Good", color: "slate", icon: "eye", motion: "blink",
+         items: ["Pretty template", "Generic tips", "0 saves"] },
+right: { label: "Gets Saved", color: "green", icon: "approve", motion: "draw",
+         items: ["Real pain point", "Usable today", "Shares & DMs"] },
+```
+
+Budgets (sparse, the card default): `grid` 4-6 cells × 2-4 items · `steps` 4-6
+steps · `funnel` 4-5 stages · `compare` 3-5 paired rows. Cards are text-first —
+fewer, sharper items beat dense ones. Run `hyperframes inspect` to catch overflow.
+
 ## 4. Icon catalog
 
 `icon` names map to SVGs in `index.html` `ICONS`. Each renders white inside a
@@ -202,6 +260,15 @@ LAYOUTS.timeline = function (F) {
 Document its fields here and you're done — `FRAME.metaphor = "timeline"` routes
 to it.
 
+Two builder styles exist in `LAYOUTS`:
+- **Node builders** (`galaxy`, `flow`) emit `.node` elements via `makeNode(...)`;
+  the engine applies their `motion` automatically in a final pass.
+- **Card builders** (`grid`, `steps`, `funnel`, `compare`) build their own card
+  DOM and call `MOTION[m](iconWrapper)` directly — the wrapper only needs a
+  `.node-icon` child. Use `deepGrad(P)` for any white-text-on-color fill (it
+  darkens the lighter palette slots enough for AA) and put text in an inner
+  `<span>` so the contrast validator samples the box, not the glyph.
+
 ## 8. Worked examples
 
 - **`examples/harnessed-llm-agent`** — `galaxy`. "A Harnessed LLM Agent":
@@ -214,5 +281,17 @@ to it.
   `roleOrder`, and semantic role defaults.
 - **`examples/skills-vs-sub-agents`** — `flow` plus rendered assets,
   proof-check manifest, and normal/UHD fallback GIF renderer.
+
+Creator-card metaphors (LinkedIn-infographic style, `creator-pop` theme):
+
+- **`examples/linkedin-niche-funnel`** — `funnel`. "How to Find Your Niche":
+  5-stage filtering with rejected chips dropping away.
+- **`examples/linkedin-content-4ps`** — `grid`. "The 4-P Content Mix": a 2×2 of
+  color-coded framework cards.
+- **`examples/linkedin-viral-checklist`** — `steps`. "5 Tests for a Viral Post":
+  numbered checklist down a marching rail.
+- **`examples/linkedin-stale-vs-saved`** — `compare`. "Why Most Infographics
+  Flop": two columns + VS badge. Each ships a `proof.json` that relaxes
+  `delta_spike_ratio` for the sparse-motion card family.
 
 Read either `frame.js` next to its rendered GIF to see the schema in practice.

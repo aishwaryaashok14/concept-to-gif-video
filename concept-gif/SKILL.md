@@ -53,11 +53,22 @@ square loop where every node has a subtle, seek-safe micro-motion.
    - `engineering-map` — technical or architecture reference map
    - `product-workflow` — staged product or PM workflow
    - `social-share` — punchier sparse shareable GIF
+   - `linkedin-grid` / `linkedin-steps` / `linkedin-funnel` / `linkedin-compare`
+     — bold, save-worthy LinkedIn-infographic cards (the `creator-pop` look);
+     each sets its card metaphor for you.
 
-   Then decompose the topic into groups:
+   Then decompose the topic into groups, picking the metaphor by the shape of
+   the idea. Two **diagram** metaphors:
    - `galaxy` — groups orbit a center (anatomies, taxonomies, "N pillars of X").
    - `flow` — groups are stages a thing passes through top→bottom (architectures,
      pipelines, request flows).
+
+   …and four **creator-card** metaphors (bold LinkedIn-infographic style, à la
+   Vincent Pierri — use with `creator-pop` / the `linkedin-*` presets):
+   - `grid` — a matrix of buckets (frameworks, "the N Ps", 2×2s).
+   - `steps` — an ordered, numbered checklist or process.
+   - `funnel` — progressive filtering / qualification (items drop out per stage).
+   - `compare` — two sides weighed against each other (before/after, old vs new).
 
 2. **Scaffold a project.** Copy the engine into a new folder:
    ```bash
@@ -137,3 +148,7 @@ square loop where every node has a subtle, seek-safe micro-motion.
 - `examples/product-workflow-roles` — preset + semantic roles coverage.
 - `examples/skills-vs-sub-agents` — complete generated example with GIF,
   ultra-HD GIF, proof manifest, and fallback renderer.
+- `examples/linkedin-niche-funnel` (funnel), `examples/linkedin-content-4ps`
+  (grid), `examples/linkedin-viral-checklist` (steps),
+  `examples/linkedin-stale-vs-saved` (compare) — the creator-card metaphors in
+  the `creator-pop` style, each with a `proof.json` tuned for sparse-motion cards.

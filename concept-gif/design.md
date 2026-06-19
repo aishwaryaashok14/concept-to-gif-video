@@ -86,6 +86,14 @@ per zone for separation, and the theme decides the actual colors.
 | `ocean` | cool, calm | indigo · azure · emerald · teal · gold · magenta · steel |
 | `forest` | earthy, natural | clay · moss · forest · denim · ochre · rust · stone |
 | `berry` | vivid jewel | violet · blue · teal · gold · amber · magenta · plum |
+| `creator-pop` | bold LinkedIn-infographic | saturated blue · green · violet · amber · pink · teal · slate, big radius, punchy |
+
+`creator-pop` is built for the **creator-card metaphors** (`grid`, `steps`,
+`funnel`, `compare`) — bold, color-coded gradient boxes in the style of
+LinkedIn infographic creators like Vincent Pierri. White text on color fills is
+auto-darkened to AA by the engine's `deepGrad()`. Reach for it (or the
+`linkedin-*` presets) when the goal is a punchy, save-worthy social post rather
+than a calm editorial diagram.
 
 Set the selected theme in `frame.js`:
 
@@ -108,6 +116,10 @@ colors/defaults to tiers or zones that omit both `color` and `role`.
 | `engineering-map` | `technical-blueprint` | denser system or architecture map |
 | `product-workflow` | `product-polish` | staged PM/product/launch workflows |
 | `social-share` | `product-polish` | fewer nodes, stronger hierarchy |
+| `linkedin-grid` | `creator-pop` | framework matrix / "the N Ps" (sets `metaphor: grid`) |
+| `linkedin-steps` | `creator-pop` | numbered checklist / process (sets `metaphor: steps`) |
+| `linkedin-funnel` | `creator-pop` | filtering / qualification funnel (sets `metaphor: funnel`) |
+| `linkedin-compare` | `creator-pop` | before/after, old vs new (sets `metaphor: compare`) |
 
 `density` is authoring metadata: use it to decide how much content belongs in
 one GIF and how strict proof-checking should be. The engine still auto-condenses
@@ -205,7 +217,8 @@ Calm, continuous, **seamless** — the loop should be invisible.
 The **theme picks the metaphor** (the structure), not just the palette. The
 look in this file is shared across every metaphor; the structure is chosen per
 topic in `frame.js` (`FRAME.metaphor`). See [`frame.md`](frame.md) for the
-catalog. Two are built in:
+catalog. Six are built in — two **diagram** metaphors and four **creator-card**
+metaphors:
 
 - **`galaxy`** (anatomies / taxonomies) — a reserved title band, then 3–5
   **zones** placed by normalized `x,y`, each a soft **blob** + **dashed ring** +
@@ -214,7 +227,18 @@ catalog. Two are built in:
 - **`flow`** (architectures / pipelines) — stacked **tiers** (color-coded bands
   with a pill label) holding a row of **components**, joined by downward
   **marching arrows** so the eye reads top→bottom.
+- **`grid`** (frameworks / matrices) — an N×M of color-coded gradient **cards**,
+  each with a header icon + label and a short bulleted list.
+- **`steps`** (checklists / processes) — numbered **badges** down a marching
+  progress **rail**, each beside an icon+label card.
+- **`funnel`** (filtering / qualification) — **narrowing** stacked bars; rejected
+  **chips** in the gutter fade and drop away each loop.
+- **`compare`** (before/after) — two **columns** with a center **VS** badge, the
+  winning side glowing.
 
+The `grid`/`steps`/`funnel`/`compare` cards are the bold, save-worthy
+LinkedIn-infographic shapes; they pair with `creator-pop` / the `linkedin-*`
+presets, and put white text on color via `deepGrad()` (auto-darkened to AA).
 Fill the square and let translucent blobs/bands breathe. Run `hyperframes
 inspect` to catch label overflow. New metaphors are one builder in `LAYOUTS`.
 
